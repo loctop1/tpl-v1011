@@ -1,0 +1,101 @@
+{% extends 'layout/layout' %}
+{% block meta %}
+    {{ headTitle(newsCategory.name).setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="{{ newsCategory.metaKeywords ?: newsCategory.name }}">
+    <meta name="description" content="{{ newsCategory.metaDescription ?: newsCategory.Name }}">
+    <meta property="og:title" content="{{ newsCategory.metaTitle ?: newsCategory.name }}">
+    <meta property="og:url" content="{{ newsCategory.canonicalLink }}">
+    <meta property="og:image" content="{{ newsCategory.imgUri }}">
+    <meta property="og:type" content="category">
+    <link rel="canonical" href="{{ newsCategory.canonicalLink }}">
+{% endblock %}
+{% block body %}
+    <div class="bodywrap">
+        <div class="bread-crumb">
+            <div class="container">
+                <ul class="breadcrumb">
+                    {% set buildBread = buildBreadcrumbs(newsCategory) %}
+                    {{ render_breadcrumb(buildBread) }}
+                </ul>
+            </div>
+            <div class="blog_wrapper layout-blog">
+                <div class="container">
+                    <div class="row">
+                        <div class="right-content col-lg-12 col-12">
+                            <div class="title-page">
+                                <h1>{{ translate('Danh mục tin tức') }}</h1>
+                                <div class="title-separator">
+                                    <div class="separator-center"></div>
+                                </div>
+                            </div>
+                            <div class="row list-news">
+                                {% if(paginator.currentModels is not empty) %}
+                                    {% set t = 1 %}
+                                    {% for n in paginator.currentModels %}
+                                        <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+                                            <div class="item-blog">
+                                                <div class="wrapper">
+                                                    <a class="block-thumb thumb"
+                                                       href="{{ n.viewLink }}"
+                                                       title="{{ n.title|raw }}">
+                                                        {% if t <= 8 %}
+                                                            <img width="400" height="240"
+                                                                 class="duration-300"
+                                                                 src="{{ n.pictureUri }}"
+                                                                 alt="{{ n.title|raw }}">
+                                                        {% else %}
+                                                            <img width="400" height="240"
+                                                                 class="duration-300 lazyload"
+                                                                 src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                 data-src="{{ n.pictureUri }}"
+                                                                 alt="{{ n.title|raw }}">
+                                                        {% endif %}
+
+                                                    </a>
+                                                    <div class="block-content">
+                                                        <h3>
+                                                            <a href="{{ n.viewLink }}"
+                                                               title="{{ n.title|raw }}"
+                                                               class="line-clamp-2-new">{{ n.title|raw }}</a>
+                                                        </h3>
+                                                        <div class="article-content">
+
+                                                            <p class="justify line-clamp line-clamp-3">
+                                                                {{ n.intro|raw }}
+                                                            </p>
+
+                                                            <div class="article-info">
+                                                                <p class="time-post">
+                                                                    <i class="fa-regular fa-clock"></i>
+                                                                    <span>
+                                                                         {{ n.createdDateTime }}
+                                                                     </span>
+                                                                </p>
+
+                                                                <a href="{{ n.viewLink }}"
+                                                                   title="{{ translate('Đọc thêm') }}"
+                                                                   class="read-more">{{ translate('Đọc thêm') }}</a>
+
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {% set t = t + 1 %}
+                                    {% endfor %}
+                                {% endif %}
+
+                                <div class="pagenav">
+                                    {{ render_paginator(paginator) }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

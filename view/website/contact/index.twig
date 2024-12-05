@@ -1,0 +1,92 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Liên hệ').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="Liên hệ">
+    <meta name="description" content="Liên hệ">
+    <meta property="og:image" content="{{ getBusinessLogo() }}">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Liên hệ">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    <div class="bodywrap">
+        <div class="bread-crumb">
+            <div class="container">
+                <ul class="breadcrumb">
+                    {% set buildBread  = [{'label': translate('Liên hệ'), 'uri':'/lien-he'}] %}
+                    {{ render_breadcrumb(buildBread ) }}
+                </ul>
+            </div>
+            <div class="layout-contact">
+                <div class="container">
+                    <div class="bg-shadow">
+                        <div class="row">
+                            <div class="col-lg-5 col-12">
+                                <div class="contact">
+                                    <h4>
+                                       {{ translate('liên hệ') }}
+                                    </h4>
+
+                                    <div class="time_work">
+                                        <div class="item">
+                                            <b>{{ translate('Địa chỉ:') }}</b>
+
+                                            {{ getKeyContentValue('ADDRESS') }}
+
+                                        </div>
+                                        <div class="item">
+                                            <b>{{ translate('Hotline:') }}</b> <a class="fone" href="tel:{{ getKeyContentValue('HOTLINE') }}" title="{{ getKeyContentValue('HOTLINE') }}">{{ getKeyContentValue('HOTLINE') }}</a>
+                                        </div>
+                                        <div class="item">
+                                            <b>{{ translate('Email:') }}</b> <a href="mailto:{{ getKeyContentValue('EMAIL_CONTACT') }}" title="{{ getKeyContentValue('EMAIL_CONTACT') }}">{{ getKeyContentValue('EMAIL_CONTACT') }}</a>
+                                        </div>
+
+                                        <div class="item">
+                                            <a href="/he-thong-cua-hang" class="btn btn-primary frame"
+                                               title="{{ translate('Hệ thống cửa hàng') }}">
+                                                <svg width="14" height="32" viewBox="0 0 14 32" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg"
+                                                     class="border-svg border-svg-left">
+                                                    <path d="M13.3726 0H0.372559V13.2018L3.16222 16L6.37256 19L9.5 16L7.93628 14.5L6.37256 13L0.372559 18.6069V32H13.3726"
+                                                          fill="none"></path>
+                                                    <path d="M13.3726 0H0.372559V13.2018L3.16222 16L6.37256 19L9.5 16L7.93628 14.5L6.37256 13L0.372559 18.6069V32H13.3726"
+                                                          stroke="white"></path>
+                                                </svg>
+                                                <i class="fa-regular fa-house"></i>
+                                                {{ translate('Hệ thống cửa hàng') }}
+                                                <svg width="14" height="32" viewBox="0 0 14 32" fill="none"
+                                                     xmlns="http://www.w3.org/2000/svg"
+                                                     class="border-svg border-svg-right">
+                                                    <path d="M13.3726 0H0.372559V13.2018L3.16222 16L6.37256 19L9.5 16L7.93628 14.5L6.37256 13L0.372559 18.6069V32H13.3726"
+                                                          fill="none"></path>
+                                                    <path d="M13.3726 0H0.372559V13.2018L3.16222 16L6.37256 19L9.5 16L7.93628 14.5L6.37256 13L0.372559 18.6069V32H13.3726"
+                                                          stroke="white"></path>
+                                                </svg>
+                                            </a>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="form-contact">
+                                    <h4>
+                                        {{ translate('Liên hệ với chúng tôi') }}
+                                    </h4>
+                                    <div id="pagelogin">
+                                        {{ partial('partial/form',{'form':form}) }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-7 col-12">
+                                <div id="contact_map" class="map">
+                                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.518104241413!2d106.650981814287!3d10.771573662229935!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752ec073c87139%3A0x10ef6fd79e84aa6f!2zNzAgTOG7ryBHaWEsIFBoxrDhu51uZyAxNSwgUXXhuq1uIDExLCBUaMOgbmggcGjhu5EgSOG7kyBDaMOtIE1pbmgsIFZp4buHdCBOYW0!5e0!3m2!1svi!2s!4v1647783383128!5m2!1svi!2s"
+                                            width="600" height="450" style="border:0;" allowfullscreen=""
+                                            loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

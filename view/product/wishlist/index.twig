@@ -1,0 +1,143 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Danh sách yêu thích').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="Danh sách sản phẩm yêu thích">
+    <meta name="description" content="Danh sách sản phẩm yêu thích">
+    <meta property="og:image" content="{{ getBusinessLogo() }}">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Danh sách sản phẩm yêu thích">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set wishlist = jsonDecode(getCookies('WISHLIST_STORE_PRODUCT')) %}
+    <div class="bodywrap">
+        <section class="bread-crumb">
+            <div class="container">
+                <ul class="breadcrumb">
+                    {% set br = [{'label': translate('Sản phẩm yêu thích'), 'uri':'/wishlist'}] %}
+                    {{ render_breadcrumb(br) }}
+                </ul>
+            </div>
+        </section>
+        <section class="page">
+            <div class="container container--wishlist">
+                <div class="page-title category-title">
+                    <h1 class="title-head">
+                        <a href="/wishlist"
+                           title="{{ translate('Sản phẩm yêu thích') }}">{{ translate('Sản phẩm yêu thích') }}</a></h1>
+                </div>
+                {% set wishList = getWishlistCookie() %}
+                {% if(wishList is not empty) %}
+                    <div class="content-page rte">
+                        <div id="list-favorite">
+                            <div class="list-favorite-right" data-type="wishlist">
+                                <div class="list-favorite-main">
+                                    <div class="list-favorite-list row">
+                                        {% for p in wishList %}
+                                            {% set priceDiscount = p.priceAfterDiscount %}
+                                            <div class="col-6 col-sm-6 col-md-4 col-lg-3">
+                                                <div class="item_product_main js-wishlist-item">
+                                                    <div class="variants product-action item-product-main duration-300">
+                                                        {% if(p.calcDiscountPercent > 0) %}
+                                                            <span class="flash-sale">-{{ p.calcDiscountPercent }}%</span>
+                                                        {% endif %}
+                                                        {% if(p.getOption('psGifts')) %}
+                                                            {% set progressText = 'Kèm quà tặng' %}
+                                                            <div class="tag-promo" title="{{ progressText }}">
+                                                                <i class="fa-duotone fa-solid fa-gift"></i>
+                                                                <div class="promotion-content">
+                                                                    {{ progressText }}
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+                                                        <div class="product-thumbnail">
+                                                            <a class="image_thumb scale_hover"
+                                                               href="{{ p.viewLink }}"
+                                                               title="{{ p.name }}">
+                                                                <img class="lazyload duration-300"
+                                                                     src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                     data-src="{{ p.thumbnailUri }}"
+                                                                     alt="{{ p.name }}">
+                                                            </a>
+                                                        </div>
+                                                        <div class="product-info">
+                                                            <div class="name-price">
+                                                                <h3 class="product-name line-clamp-2-new">
+                                                                    <a href="{{ p.viewLink }}"
+                                                                       title="{{ p.name }}">{{ p.name }}</a>
+                                                                </h3>
+                                                                <div class="product-price-cart">
+                                                                    {% if(p.contactPrice or (p.price == 0)) %}
+                                                                        <span class="price"> {{ translate('Liên hệ') }}</span>
+                                                                    {% elseif (priceDiscount > 0) %}
+                                                                        <span class="compare-price">{{ p.price|number_format(0) }}₫</span>
+
+                                                                        <span class="price">{{  priceDiscount|number_format(0) }} }}₫</span>
+                                                                    {% elseif (p.oldPrice > 0) %}
+                                                                        <span class="compare-price">{{ p.oldPrice|number_format(0) }}₫</span>
+
+                                                                        <span class="price">{{ p.price|number_format(0) }}₫</span>
+                                                                    {% else %}
+                                                                        <span class="price">{{ p.price|number_format(0) }}₫</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="product-button">
+                                                                {% set dataCk = 1 %}
+                                                                {% set dataHref = 'javascript:void(0)' %}
+                                                                {% set dataTitle = 'Thêm vào giỏ hàng' %}
+                                                                {% set iconShop = '<i class="fa-light fa-bag-shopping"></i>' %}
+                                                                {% if(p.isParent) %}
+                                                                    {% set dataCk = 0 %}
+                                                                    {% set dataHref = p.viewLink %}
+                                                                    {% set dataTitle = 'Tùy chọn' %}
+                                                                    {% set iconShop = '<i class="fa-sharp fa-light fa-gear"></i>' %}
+                                                                {% endif %}
+                                                                <a href="{{ dataHref }}" class="btn-cart btn-views add_to_cart btn btn-primary _addToCartAttr"
+                                                                        title="{{ dataTitle }}"
+                                                                        data-ck="{{ dataCk }}"
+                                                                        data-psid="{{ p.id }}"
+                                                                        data-selId="{{ p.id }}" data-currency="₫">
+                                                                    <span>{{ dataTitle }}</span>
+                                                                    {{ iconShop | raw }}
+                                                                </a>
+                                                                {% set classWishlist = '' %}
+                                                                {% if p.id in wishlist | keys %}
+                                                                    {% set classWishlist = 'active' %}
+                                                                {% endif %}
+                                                                <a href="javascript:void(0)"
+                                                                   class="favorites-btn-cus setWishlist btn-views active btn-circle _addWishList {{ classWishlist }}"
+                                                                   tabindex="0" title="{{ translate('Bỏ yêu thích') }}" data-id="{{ p.id }}">
+                                                                    <i class="fa-solid fa-heart"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="content-page rte">
+                        <div id="list-favorite">
+                            <div class="list-favorite-right" data-type="wishlist">
+                                <div class="list-favorite-main">
+                                    <div class="list-favorite-list row">
+                                        <div class="list-favorite-main-top-error col-lg-12 col-md-12 col-sm-12 col-12">
+                                            <div class="alert alert-warning">{{ translate('Bạn chưa có sản phẩm yêu thích nào!') }}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+{% endblock %}

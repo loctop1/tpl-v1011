@@ -1,0 +1,182 @@
+{% extends "layout/null" %}
+{% block meta %}
+    {{ headTitle('Thanh toán').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="{{ getKeyContentValue('META_KEYWORDSs') }}">
+    <meta name="description" content="{{ getKeyContentValue('META_DESCRIPTION') }}">
+    <meta property="og:title" content="{{ getKeyContentValue('META_TITLE') }}">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:image" content="{{ getBusinessLogo() }}">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set checkUser = false %}
+    {% set user = null %}
+    {% if(hasIdentity() is not empty) %}
+        {% set checkUser = true %}
+        {% set user = getUser() %}
+    {% elseif jsonDecode(getCookies('cod')) is not empty %}
+        {% set checkUser = false %}
+        {% set user = jsonDecode(getCookies('cod')) %}
+    {% endif %}
+    {% set products = serviceCart().productList %}
+    {% set totalCartMoney = serviceCart().totalMoney %}
+    {% set quantity = serviceCart().totalQuantities %}
+    {% if products is not empty %}
+        <form action="" method="post" class="checkoutForm" id="_formCheckOut">
+            <div class="container-checkout">
+                <div class="row wrapper-payment overflow-x-hidden justify-content-between">
+                    <div class="col-lg-7 col-md-12 left-side">
+                        <div class="row justify-content-end">
+                            <div class="col-xl-10 col-lg-12 pt-3 pb-3 checkout-title">
+                                <a class="text-decoration-none" href="/"><h4 class="fw-bold text-info"> {{ translate('Trang chủ') }}</h4></a>
+                            </div>
+                            <div class="col-xl-5 col-lg-6 col-12 checkout-info">
+                                <div class="d-flex align-items-center justify-content-between checkout-info_title" style="font-size: 12px;">
+                                    <h6 class="fw-bold">{{ translate('Thông tin nhận hàng') }}</h6>
+                                    {% if (checkUser) %}
+                                        <a href="/user/signout" class="d-flex align-items-center text-info text-decoration-none">
+                                            <i class="fa-solid fa-right-from-bracket fa-xl me-1 text-info"></i>
+                                            {{ translate('Đăng xuất') }}
+                                        </a>
+                                    {% else %}
+                                        <a href="/user/signin" class="d-flex align-items-center text-info text-decoration-none">
+                                            <i class="fa-solid fa-xl fa-circle-user me-1 text-info"></i>
+                                            {{ translate('Đăng nhập') }}
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                <div class="input-box mb-3">
+                                    <input type="text" id="checkout-email" class="form-control rounded-1" name="customerEmail" placeholder=" " value="{{ user?user.email:'' }}" >
+                                    <label for="checkout-email">{{ translate('Email') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <input type="text" id="checkout-name" class="validate[required] form-control rounded-1" name="customerName" placeholder=" " value="{{ user?user.fullName:'' }}" >
+                                    <label for="checkout-name">{{ translate('Họ và tên') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <input type="text" id="checkout-phonenumber" class="validate[required,custom[phone]] form-control rounded-1" name="customerMobile" placeholder=" " value="{{ user ? (user.mobile | replace({'+84': '0'})):'' }}" >
+                                    <label for="checkout-phonenumber">{{ translate('Số điện thoại') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <input type="text" id="checkout-address" class="validate[required] form-control rounded-1" name="customerAddress" placeholder=" " value="{{ user?user.address:'' }}" >
+                                    <label for="checkout-address">{{ translate('Địa chỉ') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <select aria-label="customerCity" name="customerCityId" id="customerCityId" class="validate[required] form-control select2" tabindex="-1" >
+                                        <option value="">{{ translate('---') }}</option>
+                                        {% for city in cities %}
+                                            <option value="{{ city.Id }}">
+                                                {{ city.nativeName }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                    <label for="customerCityId">{{ translate('Tỉnh thành') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <select aria-label="customerDistrict" name="customerDistrictId" id="customerDistrictId"
+                                            class="validate[required] form-control select2"
+                                            tabindex="-1"
+                                            >
+                                        <option value="">{{ translate('---') }}</option>
+                                        {% if(user is not empty) %}
+                                            {% set dts = getDistrict(user.cityLocationId) %}
+                                            {{ toSelectBox(dts, user.districtLocationId) }}
+                                        {% endif %}
+                                    </select>
+                                    <label for="customerCityId">{{ translate('Quận huyện(tùy chọn)') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <select aria-label="customerWardId" name="customerWardId" id="customerWardId"
+                                            class="validate[required] form-control select2" tabindex="-1">
+                                        <option value="">{{ translate('---') }}</option>
+                                        {% if(user is not empty) %}
+                                            {% set dts = getWard(user.districtLocationId) %}
+                                            {{ toSelectBox(dts, user.districtLocationId) }}
+                                        {% endif %}
+                                    </select>
+                                    <label for="customerCityId">{{ translate('Phường xã (tùy chọn)') }}</label>
+                                </div>
+                                <div class="input-box mb-3">
+                                    <textarea id="checkout-note" name="description" class="form-control text-control rounded-1" rows="2" placeholder=" "></textarea>
+                                    <label for="checkout-note">{{ translate('Ghi chú (Tùy chọn)') }}</label>
+                                </div>
+                            </div>
+                            <div class="col-xl-5 col-lg-6 col-12 checkout-shipping">
+                                <h6 class="fw-bold">{{ translate('Thanh toán') }}</h6>
+                                <div class="d-flex payment-box">
+                                    {{ getPayments() | raw }}
+                                </div>
+                                <div class="d-flex w-100 mb-2">
+                                    <div id="tableShipFee"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-5 col-md-12 right-side row">
+
+                        <div class="col-xl-10 col-lg-12 d-flex order-info">
+                            <div class="order-info_title">
+                                <h5 class="fw-bold">{{ translate('Đơn hàng ') }} ({{ quantity}} {{ translate('sản phẩm') }})</h5>
+                            </div>
+                            <div class="order-info_content">
+                                {% for p in products %}
+                                    {% set moneyDiscount = p.priceAfterDiscount %}
+                                    <div class="order-info_product d-flex align-items-center justify-content-between mb-3">
+                                        <div class="order-info_image">
+                                            <img class="order-info_thumbs" src="{{ p.thumbnailUri }}" alt="{{ p.name }}">
+                                            <span class="order-info_quantity">{{ p.quantity }}</span>
+                                        </div>
+                                        <p class="order-info_name mb-0">{{ p.name }}</p>
+                                        {% if (moneyDiscount > 0) %}
+                                            <p class="order-info_price mb-0 text-end">{{ moneyDiscount|number_format(0) }}<sup>₫</sup></p>
+                                        {% elseif (p.oldPrice > 0) %}
+                                            <p class="order-info_price mb-0 text-end">{{ p.oldPrice|number_format(0) }}<sup>₫</sup></p>
+                                        {% else %}
+                                            <p class="order-info_price mb-0 text-end">{{ p.price|number_format(0) }}<sup>₫</sup></p>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="order-info_footer">
+                                <div class="order-info_coupon d-flex align-items-center justify-content-between">
+                                    <div class="coupon-box input-box">
+                                        <input aria-label="coupon" type="text" id="txtCoupon" name="voucher" class="_txtCoupon form-control coupon-code rounded-1" placeholder=" ">
+                                        <label for="coupon-code">{{ translate('Nhập mã giảm giá') }}</label>
+                                        <a type="button" class="_couponBtn btn btn-lg btn-primary coupon-apply rounded-1">{{ translate('Áp dụng') }}</a>
+                                    </div>
+                                    <p class="_couponPrice"></p>
+                                </div>
+                                <div class="order-info_bill d-flex">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="mb-0 pt-2">{{ translate('Tạm tính') }}</p>
+                                        <p class="mb-0 pt-2">{{ totalCartMoney|number_format(0) }}<sup>₫</sup></p>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <p class="mb-0 pt-2">{{ translate('Phí vận chuyển') }}</p>
+                                        <div class="caculatorShipping">
+                                            <p class="mb-0 pt-2" id="_shipFee">-</p>
+                                            <span id="showCarrier"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="order-info_action">
+                                    <div class="d-flex align-items-center justify-content-between pt-3 pb-3">
+                                        <p class="mb-0">{{ translate('Tổng cộng') }}</p>
+                                        <h4 class="mb-0 _showTotalMoney" title="{{ totalCartMoney }}" value="{{ totalCartMoney }}">{{ totalCartMoney|number_format(0) }}<sup>₫</sup></h4>
+                                    </div>
+                                    <div class="d-flex align-items-center justify-content-between checkout-finish">
+                                        <a href="/cart" class="mb-0 text-decoration-none back-to-cart">{{ translate('Quay về giỏ hàng') }}</a>
+                                        <button type="button" id="_btnCheckout" class="btn btn-lg btn-primary blue-500 rounded-1 " >{{ translate('Đặt hàng') }}</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

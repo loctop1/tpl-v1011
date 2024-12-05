@@ -1,0 +1,111 @@
+{% set orderId = getParam('orderId') %}
+{% if orderId is not empty %}
+    {% set order = getOrder({'id': orderId}) %}
+    {% if order is not empty %}
+        <div class="order-detail_page">
+            <div class="order-detail_title mb-3 d-flex justify-content-between">
+                <span>{{ translate('Chi tiết đơn hàng: ') }}<strong>#{{ order.id }}</strong></span>
+                <span data-bs-dismiss="modal" aria-label="Close" class="modal-close"><i class="fa-duotone fa-solid fa-xmark"></i></span>
+            </div>
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <div class="info-box">
+                        <h3 class="box-title text-uppercase mt-1">{{ translate('địa chỉ giao hàng') }}</h3>
+                        <div class="box-description">
+                            <p class="fw-bold text-capitalize">{{ order.fullName }}</p>
+                            <p>{{ translate('Số điện thoại: ') }}{{ order.mobile }}</p>
+                            <p>{{ translate('Địa chỉ: ') }}{{ order.address }}, {{ order.options.districtName }}, {{ order.options.cityName }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-12">
+                    <div class="info-box">
+                        <h3 class="box-title text-uppercase mt-1">{{ translate('thanh toán') }}</h3>
+                        <div class="box-description">{{ orderPayment(order.paymentMethod) }}</div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-12">
+                    <div class="info-box">
+                        <h3 class="box-title text-uppercase mt-1">{{ translate('ghi chú') }}</h3>
+                        <div class="box-description">{{ order.description ? order.description : 'Không có ghi chú' }}</div>
+                    </div>
+                </div>
+                <div class="col-12 pt-3">
+                    <div class="table-order">
+                        <table class="table table-responsive border  mb-0 borderless">
+                            <thead>
+                            <tr>
+                                <th>{{ translate('Sản phẩm') }}</th>
+                                <th class="text-center">{{ translate('Đơn giá') }}</th>
+                                <th class="text-center">{{ translate('Số lượng') }}</th>
+                                <th class="text-center">{{ translate('Tổng') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% set provisional = 0 %}
+                            {% if(order.products is not empty) %}
+                                {% for p in order.products %}
+                                    {% set price = p.product.price %}
+                                    {% set quantity = p.product.quantity %}
+                                    {% set total = (p.product.quantity * p.product.price) %}
+                                    {% set textUnit = '' %}
+                                    {% if p.product.productUnit %}
+                                        {% set price = p.product.productUnit.price %}
+                                        {% set quantity = p.product.productUnit.quantity %}
+                                        {% set total = price * quantity %}
+                                        {% set textUnit = '(' ~ p.product.productUnit.name ~ ')'%}
+                                    {% endif %}
+                                    {% set provisional = provisional + (price * quantity) %}
+                                    <tr>
+                                        <td class="text-start">
+                                            <a href="{{ p.product.viewLink }}" class="d-flex align-items-center gap-2 text-decoration-none">
+                                                <img src="{{ p.product.thumbnailUri }}" alt="{{ p.product.name }}"
+                                                     class="img-fluid img-bg_sea">
+                                                <div class="order-product_title">
+                                                    <div class="fw-medium">{{ p.product.name }} {{ textUnit }}</div>
+                                                </div>
+                                            </a>
+                                        </td>
+                                        <td class="fw-medium text-center">
+                                            {{ price | number_format(0) }}<sup>₫</sup>
+                                        </td>
+                                        <td class="text-center fw-medium">
+                                            <div>{{ quantity }}</div>
+                                        </td>
+                                        <td class="text-center fw-medium">
+                                            <div>{{ total | number_format(0) }}<sup>₫</sup></div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <table class="table table-responsive border border-top-0 borderless">
+                        <tfoot>
+                        <tr class="d-flex align-items-center">
+                            <td class="text-end w-75 flex-grow-0">{{ translate('Tạm tính') }}</td>
+                            <td class="text-end flex-grow-1">{{ provisional | number_format(0) }}<sup>₫</sup></td>
+                        </tr>
+                        <tr class="d-flex align-items-center">
+                            <td class="text-end w-75 flex-grow-0">{{ translate('Phí vận chuyển') }}</td>
+                            <td class="text-end flex-grow-1">{{ ( order.calculateTotalMoney - provisional) | number_format(0) }}<sup>₫</sup></td>
+                        </tr>
+                        <tr class="d-flex align-items-center">
+                            <td class="text-end w-75 flex-grow-0">{{ translate('Tổng tiền') }}</td>
+                            <td class="text-end fw-bolder flex-grow-1 text-danger fs-5">{{ order.calculateTotalMoney | number_format(0) }}<sup>₫</sup></td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            {% if(order.status != "Khách hủy") %}
+                <div class="order-detail_action text-end">
+                    <a class="btn btn-danger _cancelOrder fw-bolder" data-id="{{ order.id }}">
+                        {{ translate('Hủy đơn hàng') }}
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endif %}

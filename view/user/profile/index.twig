@@ -1,0 +1,128 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Thông tin người dùng').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="description" content="Thông tin người dùng">
+    <meta name="keywords" content="Thông tin người dùng">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Thông tin người dùng">
+    <meta property="og:type" content="article">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set level = 0 %}
+    {% set point = 0 %}
+    {% if user is not empty %}
+        {% set customer = getCustomerStore({'mobile':user.mobile}) %}
+        {% if customer is not empty %}
+            {% if customer.points > 0 %}
+                {% set point = customer.points %}
+            {% endif %}
+            {% set level = customer.levelName %}
+        {% endif %}
+    {% endif %}
+    <section class="section p-0 mb-3 user-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    {% set buildBread  = [{'label': translate('Trang khách hàng'), 'uri':'/user/profile'}] %}
+                    {{ render_breadcrumb(buildBread ) }}
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="bg-shadow">
+                                <div class="account-option">
+                                    <h5 class="title-account">{{ translate('trang tài khoản') }}</h5>
+                                    <div class="fw-bold mb-3">{{ translate('Xin chào,') }} <p
+                                                class="text-danger d-inline">{{ user.fullName ? user.fullName : customer.name }}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="text-warning">
+                                            <i class="fa-sharp fa-solid fa-trophy-star"></i>
+                                            {{ translate('Hạng thành viên: ') }}{{ level }}
+                                        </div>
+                                        <div class="text-info">
+                                            <i class="fa-solid fa-hundred-points"></i>
+                                            {{ translate('Điểm tích lũy: ') }}{{ point }}
+                                        </div>
+                                    </div>
+                                    <ul class="account-option_list">
+                                        <li><a href="/profile" class="active">{{ translate('Thông tin tài khoản') }}</a>
+                                        </li>
+                                        <li><a href="/order">{{ translate('Đơn hàng của bạn') }}</a></li>
+                                        <li><a href="/wishlist">{{ translate('Sản phẩm yêu thích') }}</a></li>
+                                        <li><a href="/profile/changepassword">{{ translate('Đổi mật khẩu') }}</a></li>
+                                        <li class="text-danger"><a href="/user/signout">{{ translate('Đăng xuất') }}</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="bg-shadow">
+                                <div class="account-option">
+                                    <div class="d-flex align-items-center gap-1">
+                                        <h5 class="mb-0 title-head mr-2">{{ translate('thông tin tài khoản') }}</h5>
+                                        <a href="/profile/edit" class="m-0 text-primary" title="{{ translate('Sửa') }}"><i
+                                                    class="fa-solid fa-pen-to-square"></i></a>
+                                    </div>
+                                    <div class="fw-bold mb-3"></div>
+                                    <ul class="account-option_list">
+                                        <li>
+                                            <div>
+                                                <p class="fw-bold">{{ translate('Họ tên: ') }}</p>
+                                                <p class="name-account">{{ user.fullName ? user.fullName : customer.name }}</p>
+                                            </div>
+                                        </li>
+                                        {% if(user.birthday) is not empty %}
+                                            <li>
+                                                <div>
+                                                    <p class="fw-bold">{{ translate('Ngày sinh: ') }}</p>
+                                                    <p class="birthday-account">{{ user.birthday }}</p>
+                                                </div>
+                                            </li>
+                                        {% endif %}
+                                        {% if(user.gender) is not empty %}
+                                            <li>
+                                                <div>
+                                                    <p class="fw-bold">{{ translate('Giới tính: ') }}</p>
+                                                    <p class="gender-account">{{ user.gender == 1 ? "Nam" : "Nữ" }}</p>
+                                                </div>
+                                            </li>
+                                        {% endif %}
+                                        <li>
+                                            <div>
+                                                <p class="fw-bold">{{ translate('Email: ') }}</p>
+                                                <p class="email-account">{{ user.email }}</p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div>
+                                                <p class="fw-bold">{{ translate('Số điện thoại: ') }}</p>
+                                                <p class="tel-account">{{ user.mobile ? user.mobile : customer.phone }}</p>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            {% if(user.address) %}
+                                                {% set address = user.address %}
+                                            {% else %}
+                                                {% set address = customer.address %}
+                                                {% set address = address ~ (user.options['wardName'] ? ',' ~ user.options['wardName'] : '') %}
+                                                {% set address = address ~ (user.options['districtName'] ? ',' ~ user.options['districtName'] : '') %}
+                                                {% set address = address ~ (user.options['cityName'] ? ',' ~ user.options['cityName'] : '') %}
+                                            {% endif %}
+                                            <div>
+                                                <p class="fw-bold">{{ translate('Địa chỉ: ') }}</p>
+                                                <p class="address-account">{{ address }}</p>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

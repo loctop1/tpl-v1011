@@ -1,0 +1,155 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Chỉnh sửa trang cá nhân').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="description" content="Chỉnh sửa trang cá nhân">
+    <meta name="keywords" content="Chỉnh sửa trang cá nhân">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Chỉnh sửa trang cá nhân">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set level = 0 %}
+    {% set point = 0 %}
+    {% if user is not empty %}
+        {% set customer = getCustomerStore({'mobile':user.mobile}) %}
+        {% if customer is not empty %}
+            {% if customer.points > 0 %}
+                {% set point = customer.points %}
+            {% endif %}
+            {% set level = customer.levelName %}
+        {% endif %}
+    {% endif %}
+    {% set cookies = getCookies('nuctk') %}
+    <section class="section p-0 mb-3 user-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    {% set buildBread  = [{'label': translate('Chỉnh sửa trang cá nhân'), 'uri':'/profile/edit'}] %}
+                    {{ render_breadcrumb(buildBread ) }}
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="bg-shadow">
+                                <div class="account-option">
+                                    <h5 class="title-account">{{ translate('trang tài khoản') }}</h5>
+                                    <div class="fw-bold mb-3">{{ translate('Xin chào,') }} <p
+                                                class="text-danger d-inline">{{ user.fullName ? user.fullName : customer.name }}</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <div class="text-warning">
+                                            <i class="fa-sharp fa-solid fa-trophy-star"></i>
+                                            {{ translate('Hạng thành viên: ') }}{{ level }}
+                                        </div>
+                                        <div class="text-info">
+                                            <i class="fa-solid fa-hundred-points"></i>
+                                            {{ translate('Điểm tích lũy: ') }}{{ point }}
+                                        </div>
+                                    </div>
+                                    <ul class="account-option_list">
+                                        <li><a href="/profile" class="active">{{ translate('Thông tin tài khoản') }}</a>
+                                        </li>
+                                        <li><a href="/order">{{ translate('Đơn hàng của bạn') }}</a></li>
+                                        <li><a href="/profile/changepassword">{{ translate('Đổi mật khẩu') }}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="bg-shadow">
+                                <div class="account-option col-6">
+                                    <h5 class="title-head">{{ translate('Cập nhật thông tin cá nhân') }}</h5>
+                                    <div class="fw-bold mb-3"></div>
+                                </div>
+                                <div class="edit-profile_form col-12">
+                                    <form class="d-flex" method="post">
+                                        <input type="hidden" value="{{ cookies ?? '' }}" name="userCommonCsrf">
+                                        <div class="col-12 pe-12">
+                                            <div class="d-flex align-items-center mb-3 flex-wrap">
+                                                <label for="name" class="col-3">{{ translate('Họ và tên') }}</label>
+                                                <div class="col-9">
+                                                    <fieldset class="form-group">
+                                                        <input type="text" class="form-control" disabled
+                                                               placeholder="{{ user.fullName ? user.fullName : customer.name }}"
+                                                               name="name"
+                                                               id="name" value="{{ user.fullName }}">
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-3 flex-wrap">
+                                                <label for="sex" class="col-3">{{ translate('Giới tính') }}</label>
+                                                <div class="col-9 d-flex align-items-center gap-4">
+                                                    {% set gender = [1,2] %}
+                                                    {% for value in gender %}
+                                                        {% set checked = '' %}
+                                                        {% if user.gender == value %}
+                                                            {% set checked = 'checked' %}
+                                                        {% endif %}
+                                                        <div class="form-check">
+                                                            <input aria-label="check"
+                                                                   class="form-check-input" {{ checked }}
+                                                                   value="{{ value }}" type="radio" name="gender">
+                                                            <label class="form-check-label">
+                                                                {% if(value == 1) %}
+                                                                    {{ translate('Nam') }}
+                                                                {% else %}
+                                                                    {{ translate('Nữ') }}
+                                                                {% endif %}
+                                                            </label>
+                                                        </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center mb-3 flex-wrap">
+                                                <label for="birthday" class="col-3">{{ translate('Ngày sinh') }}</label>
+                                                <div class="col-9">
+                                                    <fieldset class="form-group">
+                                                        <input type="date" class="form-control" name="birthday"
+                                                               id="birthday" value="{{ user.birthday }}">
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between mb-3 custom">
+                                                <span class="textgrey col-2">{{ translate('Số điện thoại') }}</span>
+                                                <div class="col-9">
+                                                    <fieldset class="form-group">
+                                                        <input aria-label="mobile" type="text" class="form-control"
+                                                               name="mobile"
+                                                               id="mobile" value="{{ user.mobile }}">
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between mb-3 custom">
+                                                <span class="textgrey col-2">Email</span>
+                                                <div class="col-9">
+                                                    <fieldset class="form-group">
+                                                        <input aria-label="email" disabled type="text"
+                                                               class="form-control"
+                                                               name="email" id="email" value="{{ user.email }}">
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex align-items-center justify-content-between mb-3 custom">
+                                                <span class="textgrey col-2">{{ translate('Địa chỉ') }}</span>
+                                                <div class="col-9">
+                                                    <fieldset class="form-group">
+                                                        <input aria-label="address" type="text" class="form-control"
+                                                               name="address" id="address" value="{{ user.address }}">
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="text-end mt-5">
+                                                <button type="submit"
+                                                        class="btn btn-update btn-primary">{{ translate('Cập nhật') }}</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

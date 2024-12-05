@@ -1,0 +1,43 @@
+{% set nav = "" %}
+{% set menus = getCategories() %}
+    {% set nav = nav ~ '<ul class="sudes-main-cate">' %}
+
+    {% for menu in menus %}
+        {% set nav = nav ~ '<li class="' ~ (menu.childs is not empty ? 'sudes-main-cate-has-child ' : '') ~ 'menu-item-count">' %}
+        {% set nav = nav ~ '<a href="' ~ menu.viewLink ~ '" title="' ~ menu.name ~ '">' %}
+        {% set nav = nav ~ '<img class="lazyload" src="' ~ menu.imageUri ~ '" data-src="' ~ menu.imageUri ~ '" alt="' ~ menu.id ~ '">' %}
+        {% set nav = nav ~ menu.name %}
+        {% set nav = nav ~ '</a>' %}
+
+        {% if menu.childs is not empty %}
+            {% set nav = nav ~ '<i class="open_mnu down_icon"></i>' %}
+            {% set nav = nav ~ '<ul class="menu-child sub-menu sudes-sub-mega-menu">' %}
+
+            {% for child in menu.childs %}
+                {% set nav = nav ~ '<li class="sudes-main-cate-has-child clearfix">' %}
+                {% set nav = nav ~ '<a href="' ~ child.viewLink ~ '" title="' ~ child.name ~ '">' ~ child.name ~ '</a>' %}
+
+
+                {% if child.childs is not empty %}
+                    {% set nav = nav ~ '<i class="open_mnu down_icon"></i>' %}
+                    {% set nav = nav ~ '<ul class="menu-child menu-child-2 sub-menu clearfix">' %}
+
+                    {% for child2 in child.childs %}
+                        {% set nav = nav ~ '<li>' %}
+                        {% set nav = nav ~ '<a href="' ~ child2.viewLink ~ '" title="' ~ child2.name ~ '">' ~ child2.name ~ '</a>' %}
+                        {% set nav = nav ~ '</li>' %}
+                    {% endfor %}
+
+                    {% set nav = nav ~ '</ul>' %}
+                {% endif %}
+
+                {% set nav = nav ~ '</li>' %}
+            {% endfor %}
+
+            {% set nav = nav ~ '</ul>' %}
+        {% endif %}
+
+        {% set nav = nav ~ '</li>' %}
+    {% endfor %}
+    {% set nav = nav ~ '</ul>' %}
+{{ nav | raw }}

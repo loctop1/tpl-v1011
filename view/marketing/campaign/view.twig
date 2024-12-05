@@ -1,0 +1,15 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle( campaign.name ).setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="description" content="{{ campaign.metaDescription ?:campaign.name }}">
+    <meta name="keywords" content="{{ campaign.metaKeywords ?:campaign.name }}">
+    <meta property="og:title" content="{{ campaign.metaTitle ?:campaign.name }}">
+    <meta property="og:description" content="{{ campaign.metaDescription?:campaign.name }}">
+    <meta property="og:keywords" content="{{ campaign.metaKeywords?:campaign.name }}">
+    <meta property="og:url" content="{{ campaign.canonicalLink }}">
+    <meta property="og:image" content="{{ campaign.imageUri }}">
+    <link rel="canonical" href="{{ campaign.canonicalLink }}">
+{% endblock %}
+{% block body %}
+
+{% endblock %}

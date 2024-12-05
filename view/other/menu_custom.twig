@@ -1,0 +1,76 @@
+{% set nav = "" %}
+
+{% set menus = getMenus({'type':'header'}) %}
+{% if menus is not empty %}
+    {% set nav = nav ~ '<div class="col-menu has-promo-btn"><ul id="nav" class="nav">' %}
+    {% for item in menus %}
+        {% set arrTypeCate = item.typeCates %}
+        {% if item.type in arrTypeCate %}
+            {% set categoryCustom = getCategoryTypeMenu(item.type) %}
+            {% if categoryCustom is not empty %}
+                {% for c in categoryCustom %}
+                    {% set nav = nav ~ '<li class="nav-item ' ~ (c.childs is not empty ? 'has-childs' : '') ~ '" data-section="header_nav">' %}
+                    {% set nav = nav ~ '<a class="nav-link" href="' ~ c.viewLink ~ '" title="' ~ c.name ~ '">' ~ c.name %}
+
+                    {% if c.childs is not empty %}
+                        {% set nav = nav ~ '<i class="fa-regular fa-chevron-down icon-right"></i>' %}
+                    {% endif %}
+                    {% set nav = nav ~ '</a>' %}
+
+                    {% if c.childs is not empty %}
+                        {% set nav = nav ~ '<i class="open_mnu down_icon"></i>' %}
+                        {% set nav = nav ~ '<ul class="dropdown-menu">' %}
+                        {% for child in c.childs %}
+                            {% set nav = nav ~ '<li class="dropdown-submenu nav-item-2">' %}
+                            {% set nav = nav ~ '<a class="nav-link" href="' ~ child.viewLink ~ '" title="' ~ child.name ~ '">' ~ child.name ~ '</a>' %}
+                            {% set nav = nav ~ '</li>' %}
+                        {% endfor %}
+                        {% set nav = nav ~ '</ul>' %}
+                    {% endif %}
+                    {% set nav = nav ~ '</li>' %}
+                {% endfor %}
+            {% endif %}
+        {% else %}
+            {% set nav = nav ~ '<li class="nav-item ' ~ (item.childs is not empty ? 'has-childs' : '') ~ '" data-section="header_nav">' %}
+            {% set nav = nav ~ '<a class="nav-link" href="' ~ item.viewLink ~ '" title="' ~ item.name ~ '">' ~ item.name %}
+
+            {% if item.childs is not empty %}
+                {% set nav = nav ~ '<i class="fa-regular fa-chevron-down icon-right"></i>' %}
+            {% endif %}
+            {% set nav = nav ~ '</a>' %}
+
+            {% if item.childs is not empty %}
+                {% set nav = nav ~ '<i class="open_mnu down_icon"></i>' %}
+                {% set nav = nav ~ '<ul class="dropdown-menu">' %}
+                {% for child in item.childs %}
+                    {% set nav = nav ~ '<li class="dropdown-submenu nav-item-2 ' ~ (child.childs is not empty ? 'has-childs2' : '') ~ '">' %}
+                    {% set nav = nav ~ '<a class="nav-link" href="' ~ child.viewLink ~ '" title="' ~ child.name ~ '">' ~ child.name %}
+
+                    {% if child.childs is not empty %}
+                        {% set nav = nav ~ '<svg width="8" height="17" viewBox="0 0 8 17" fill="none" xmlns="http://www.w3.org/2000/svg">' %}
+                        {% set nav = nav ~ '<path d="M7.13382 7.1278L7.13379 7.12777L0.512271 0.509686L0.795057 0.226752L0.51227 0.509685C0.512123 0.509538 0.51201 0.509431 0.511927 0.509356L7.13382 7.1278ZM7.13382 7.1278C7.62239 7.61603 7.622 8.40641 7.13301 8.89414L7.13298 8.89417L0.502368 15.5089C0.50222 15.509 0.502106 15.5091 0.502022 15.5092C0.501841 15.5092 0.501547 15.5093 0.501149 15.5093C0.500827 15.5093 0.500574 15.5093 0.500392 15.5092L7.13055 8.89499C7.13056 8.89498 7.13057 8.89497 7.13058 8.89495C7.61976 8.407 7.62011 7.61541 7.13138 7.12699L7.13382 7.1278Z"></path>' %}
+                        {% set nav = nav ~ '</svg>' %}
+                    {% endif %}
+                    {% set nav = nav ~ '</a>' %}
+
+                    {% if child.childs is not empty %}
+                        {% set nav = nav ~ '<i class="open_mnu down_icon"></i>' %}
+                        {% set nav = nav ~ '<ul class="dropdown-menu">' %}
+                        {% for child2 in child.childs %}
+                            {% set nav = nav ~ '<li class="nav-item-3">' %}
+                            {% set nav = nav ~ '<a class="nav-link" href="' ~ child2.viewLink ~ '" title="' ~ child2.name ~ '">' ~ child2.name ~ '</a>' %}
+                            {% set nav = nav ~ '</li>' %}
+                        {% endfor %}
+                        {% set nav = nav ~ '</ul>' %}
+                    {% endif %}
+                    {% set nav = nav ~ '</li>' %}
+                {% endfor %}
+                {% set nav = nav ~ '</ul>' %}
+            {% endif %}
+            {% set nav = nav ~ '</li>' %}
+        {% endif %}
+    {% endfor %}
+    {% set nav = nav ~ '</ul></div>' %}
+{% endif %}
+
+{{ nav | raw }}

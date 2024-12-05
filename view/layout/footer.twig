@@ -1,0 +1,170 @@
+<footer class="footer">
+    <div class="mid-footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 col-12 footer-info col-lg-cus-30">
+                    <div class="logo-footer">
+                        <a href="/">
+                            <img src="{{ getBusinessLogo() }}" alt="Logo">
+                        </a>
+                    </div>
+                    <div class="list-menu toggle-mn">
+                        <div class="content-contact clearfix">
+                            <span class="list-footer">
+                                <i class="fa-light fa-location-dot"></i>
+                                <b>{{ translate('Địa chỉ: ') }}</b>
+                               {{ getKeyContentValue('ADDRESS') }}
+                            </span>
+                        </div>
+                        <div class="content-contact clearfix">
+                            <span class="list-footer">
+                                <i class="fa-light fa-phone"></i>
+                                <b>{{ translate('Điện thoại: ') }}</b>
+                               <a href="tel:{{ getKeyContentValue('HOTLINE') }}"
+                                  title="{{ getKeyContentValue('HOTLINE') }}">{{ getKeyContentValue('HOTLINE') }}</a>
+                            </span>
+                        </div>
+                        <div class="content-contact clearfix">
+                            <span class="list-footer">
+                                <i class="fa-regular fa-envelope"></i>
+                                <b>{{ translate('Email: ') }}</b>
+                                <a href="mailto:{{ getKeyContentValue('EMAIL_CONTACT') }}"
+                                   title="{{ getKeyContentValue('EMAIL_CONTACT') }}">{{ getKeyContentValue('EMAIL_CONTACT') }}</a>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4 col-12 footer-click col-lg-cus-20">
+                    <h4 class="title-menu clicked">
+                        <span>{{ getKeyContentValue('FOOTER_TITLE_1') }}</span>
+                    </h4>
+                    {{ getKeyContentValue('FOOTER_CONTENT_1') }}
+                </div>
+                <div class="col-md-4 col-12 footer-info col-lg-cus-20">
+                    <h4 class="title-menu clicked">
+                        <span>{{ getKeyContentValue('FOOTER_TITLE_2') }}</span>
+                    </h4>
+                    {{ getKeyContentValue('FOOTER_CONTENT_2') }}
+                </div>
+                <div class="col-md-4 col-12 footer-info col-lg-cus-30">
+                    <div class="block-payment">
+                        <h4 class="title-menu">
+                            <span>{{ getKeyContentValue('FOOTER_TITLE_3') }}</span>
+                        </h4>
+                        <div class="social-footer">
+                            <div class="social">
+                                <a href="{{ getKeyContentValue('SOCIAL_FACEBOOK') }}" target="_blank" title="Facebook">
+                                    <i class="fa-brands fa-facebook"></i>
+                                </a>
+                                <a href="{{ getKeyContentValue('SOCIAL_INSTAGRAM') }}" target="_blank"
+                                   title="instagram">
+                                    <i class="fa-brands fa-instagram"></i>
+                                </a>
+                                <a href="{{ getKeyContentValue('SOCIAL_SHOPEE') }}" target="_blank" title="shoppe">
+                                    <i class="fab fa-shopify"></i>
+                                </a>
+                                <a href="{{ getKeyContentValue('SOCIAL_TIKTOK') }}" target="_blank" title="tiktok">
+                                    <i class="fa-brands fa-tiktok"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="bg-footer-botton copyright">
+        <div class="container">
+            <div class="row tablet">
+                <div class="col-lg-12 col-md-12 col-xs-12 fot_copyright">
+                    <span class="wsp">
+                         {% set showTime = showTime({'premiumWebsiteColor': getKeyContentValue('PREMIUM_WEBSITE_COLOR')}) %}
+                        <p data-runtime='Memory: {{ showTime.memoryUsed }} - Time: {{ showTime.time }} s' id='runtime'
+                           style='clear:both; padding:10px 0; text-align:center; display: {{ showTime.display }};margin: 0'>
+                            Thiết kế website bởi
+                            <img src="{{ linkSystemImage('/images/favicon.ico') }}" alt='Thiết kế web bởi NHANH.VN'
+                                 title='Thiết kế web bởi NHANH.VN'/>
+                            <a class='logo' href='https://nhanh.vn' target='_blank'>Nhanh.vn</a>
+                        </p>
+                        {% if(showTime.premiumWebsite) %}
+                            <p style="display:block; text-align: center">
+                                {{ showTime.premiumWebsite | raw }}
+                            </p>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <a href="#" class="backtop show" title="{{ translate('Lên đầu trang') }}">
+                <svg width="58" height="58" viewBox="0 0 58 58" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2.13003" y="29" width="38" height="38" transform="rotate(-45 2.13003 29)" stroke="black"
+                          fill="#fff" stroke-width="2"></rect>
+                    <rect x="8" y="29.2133" width="30" height="30" transform="rotate(-45 8 29.2133)"
+                          fill="black"></rect>
+                    <path d="M18.5 29H39.5" stroke="white" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                    <path d="M29 18.5L39.5 29L29 39.5" stroke="white" stroke-width="2" stroke-linecap="round"
+                          stroke-linejoin="round"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+
+    <div class="popup-ngonngu">
+        <div class="icon">
+            <i class="fa-light fa-globe"></i>
+        </div>
+        <div class="language">
+            {{ getTranslate() | raw }}
+        </div>
+    </div>
+
+    <div id="flash-message-container" class="w-100 h-100 position-fixed left-0 top-0 flash-message-container">
+        <div class="d-flex align-items-center justify-content-center w-100 h-100 ">
+            <div id="flash-message" class="p-4 text-center flash-message">
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="svg-success">
+                    <rect width="52" height="52" rx="26" fill="#3BA500" fill-opacity="0.08"></rect>
+                    <rect x="6" y="6" width="40" height="40" rx="20" fill="#3BA500" fill-opacity="0.08"></rect>
+                    <path d="M21.75 26L24.58 28.83L30.25 23.17M26 36C31.5 36 36 31.5 36 26C36 20.5 31.5 16 26 16C20.5 16 16 20.5 16 26C16 31.5 20.5 36 26 36Z"
+                          stroke="#3BA500" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <svg width="52" height="52" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg"
+                     class="svg-error">
+                    <rect width="52" height="52" rx="26" fill="#E81B2B" fill-opacity="0.08"></rect>
+                    <rect x="6" y="6" width="40" height="40" rx="20" fill="#E81B2B" fill-opacity="0.08"></rect>
+                    <path d="M23.17 28.83L28.83 23.17M28.83 28.83L23.17 23.17M26 36C31.5 36 36 31.5 36 26C36 20.5 31.5 16 26 16C20.5 16 16 20.5 16 26C16 31.5 20.5 36 26 36Z"
+                          stroke="#E81B2B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <div class="message mt-3">Đã thêm sản phẩm vào giỏ hàng</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="popup-coupon">
+        <div class="content">
+            <div class="title">
+                {{ translate('Thông tin voucher') }}
+            </div>
+            <div class="close-popup-coupon" title="{{ translate('Đóng') }}">
+                <i class="fa-light fa-xmark"></i>
+            </div>
+            <ul>
+                <li>
+                    <span>{{ translate('Mã giảm giá:') }}</span>
+                    <span class="code">Mã giảm giá</span>
+                </li>
+                <li>
+                    <span>{{ translate('Ngày hết hạn:') }}</span>
+                    <span class="time">Ngày hết hạn</span>
+                </li>
+                <li>
+                    <span>{{ translate('Mô tả:') }}</span>
+                    <span class="dieukien">Mô tả</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="body-backdrop"></div>
+</footer>

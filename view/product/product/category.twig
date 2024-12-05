@@ -1,0 +1,220 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle(category.name).setAutoEscape(false)|raw }}
+    <meta name="description" content="{{ category.metaDescription?:category.name }}">
+    <meta name="keywords" content="{{ category.metaKeywords?:category.name }}">
+    <meta property="og:url" content="{{ category.canonicalLink }}">
+    <meta property="og:title" content="{{ category.metaTitle?:category.name }}">
+    <meta property="og:description" content="{{ category.metaDescription }}">
+    <meta property="og:image" content="{{ category.imageUri }}">
+    <meta property="og:type" content="catgegory">
+    <link rel="canonical" href="{{ category.canonicalLink }}">
+{% endblock %}
+
+{% block body %}
+    {% set wishlist = jsonDecode(getCookies('WISHLIST_STORE_PRODUCT')) %}
+    <div class="bodywrap">
+        <div class="layout-collection">
+            <section class="bread-crumb">
+                <div class="container">
+                    <ul class="breadcrumb">
+                        {% set buildBread = buildBreadcrumbs(category) %}
+                        {{ render_breadcrumb(buildBread) }}
+                    </ul>
+                </div>
+            </section>
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-12 col-banner">
+                        {% if(category.imageUri is not empty) %}
+                            <a href="{{ category.viewLink }}" title="{{ category.name }}"
+                               class="duration-300  has-aspect-1">
+                                <img alt="Banner top" width="1250" height="306"
+                                     src="{{ category.imageUri }}">
+                            </a>
+                        {% else %}
+                            <a href="javascript:void(0)" class="duration-300  has-aspect-1">
+                                <img alt="Banner top" width="1250" height="306"
+                                     src="https://dummyimage.com/1250x400/163645/fff">
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <div class="col-title">
+                            <h1>{{ category.name|raw }}</h1>
+                            <div class="title-separator">
+                                <div class="separator-center"></div>
+                            </div>
+                        </div>
+                        <div class="col-list-cate">
+                            <div class="menu-list">
+
+                                {% if(category.childs is not empty) %}
+                                    {% for child in category.childs %}
+                                        <a class="cate-item duration-300 " href="{{ child.viewLink }}"
+                                           title="{{ child.name }}">
+                                            <div class="cate-info-title">{{ child.name }}</div>
+                                        </a>
+                                    {% endfor %}
+                                {% else %}
+                                    {% set l_cate = getCategories() %}
+                                    {% if (l_cate is not empty) %}
+                                        {% for c in l_cate %}
+                                            <a class="cate-item duration-300 " href="{{ c.viewLink }}"
+                                               title="{{ c.name }}">
+                                                <div class="cate-info-title">{{ c.name }}</div>
+                                            </a>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endif %}
+                            </div>
+                        </div>
+
+
+                        {% if category.description is not empty %}
+                            <div class="col-desc">
+                                <p>{{ category.description }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="block-collection col-lg-12 col-12">
+                        <div class="category-products products-view products-view-grid list_hover_pro">
+                            <div class="filter-containers">
+                                <div class="sort-cate clearfix">
+                                    <div class="sudes-filter">
+                                        <a class="btn btn-outline btn-filter" title="Bộ lọc">
+                                            {{ translate('Lọc theo :') }} {{ category.name | raw }}
+                                        </a>
+                                    </div>
+
+                                    <div class="sort-cate-right">
+                                        <h3>
+                                            <i class="fa-light fa-arrow-down-a-z"></i> Xếp theo</h3>
+                                        <ul>
+                                            <li class="btn-quick-sort default {{ shows == '' ? 'active' : '' }}">
+                                                <a href="{{ removeFilter('show') }}"
+                                                   title="Mặc định"><i></i>{{ translate('Hàng mới') }}</a>
+                                            </li>
+                                            <li class="btn-quick-sort alpha-asc {{ shows[0] == 'priceAsc' ? 'active' : '' }}">
+                                                <a href="{{ addFilter('show', 'priceAsc', 2) }}"
+                                                   title="Tên A-Z"><i></i> {{ translate('Giá tăng dần') }}</a>
+                                            </li>
+                                            <li class="btn-quick-sort alpha-desc {{ shows[0] == 'priceDesc' ? 'active' : '' }}">
+                                                <a href="{{ addFilter('show', 'priceDesc', 2) }}"
+                                                   title="Tên Z-A"><i></i>{{ translate('Giá giảm dần') }}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% if(paginator.currentModels is not empty) %}
+
+                                <div class="products-view products-view-grid list_hover_pro">
+                                    <div class="row">
+                                        {% for p in paginator.currentModels %}
+                                            {% set priceDiscount = p.priceAfterDiscount %}
+                                            <div class="col-6 col-md-3">
+                                                <div class="item_product_main">
+
+                                                    <div class="variants product-action item-product-main duration-300"
+                                                         data-id="{{ p.id }}">
+                                                        {% if p.calcDiscountPercent > 0 %}
+                                                            <span class="flash-sale">-{{ p.calcDiscountPercent }}%</span>
+                                                        {% endif %}
+
+
+                                                        {% if(p.getOption('psGifts') is not empty) %}
+                                                            {% set progressText = 'Kèm quà tặng' %}
+                                                            <div class="tag-promo" title="{{ progressText }}">
+                                                                <i class="fa-duotone fa-solid fa-gift"></i>
+                                                                <div class="promotion-content">
+                                                                    {{ progressText }}
+                                                                </div>
+                                                            </div>
+                                                        {% endif %}
+
+                                                        <div class="product-thumbnail">
+                                                            <a href="{{ p.viewLink }}" class="image_thumb scale_hover"
+                                                               title="{{ p.name }}">
+                                                                <img src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                     data-src="{{ p.thumbnailUri }}"
+                                                                     alt="{{ p.name }}"
+                                                                     class="lazyload duration-300">
+
+                                                            </a>
+                                                        </div>
+                                                        <div class="product-info">
+                                                            <div class="name-price">
+                                                                <h3 class="product-name line-clamp-2-new">
+                                                                    <a href="{{ p.viewLink }}"
+                                                                       title="{{ p.name }}">{{ p.name }}</a>
+                                                                </h3>
+                                                                <div class="product-price-cart">
+                                                                    {% if(p.contactPrice or (p.price == 0)) %}
+                                                                        <span class="text-danger"><strong>{{ translate('Liên hệ') }}</strong></span>
+                                                                    {% elseif (priceDiscount > 0) %}
+                                                                        <span class="compare-price">{{ p.price | number_format(0, '', '.') }}₫</span>
+                                                                        <span class="price">{{ priceDiscount | number_format(0, '', '.') }}₫</span>
+                                                                    {% elseif (p.oldPrice > 0) %}
+                                                                        <span class="compare-price">{{ p.oldPrice | number_format(0, '', '.') }}₫</span>
+                                                                        <span class="price">{{ p.price | number_format(0, '', '.') }}₫</span>
+                                                                    {% else %}
+                                                                        <span class="price">{{ p.price | number_format(0, '', '.') }}₫</span>
+                                                                    {% endif %}
+                                                                </div>
+                                                            </div>
+                                                            <div class="product-button">
+                                                                {% set dataCk = 1 %}
+                                                                {% set dataHref = 'javascript:void(0)' %}
+                                                                {% set dataTitle = 'Thêm vào giỏ hàng' %}
+                                                                {% set iconShop = '<i class="fa-light fa-bag-shopping"></i>' %}
+                                                                {% if(p.isParent) %}
+                                                                    {% set dataCk = 0 %}
+                                                                    {% set dataHref = p.viewLink %}
+                                                                    {% set dataTitle = 'Tùy chọn' %}
+                                                                    {% set iconShop = '<i class="fa-sharp fa-light fa-gear"></i>' %}
+                                                                {% endif %}
+                                                                <a href="{{ dataHref }}" class="btn-cart btn-views add_to_cart btn btn-primary _addToCartAttr"
+                                                                        title="{{ dataTitle }}"
+                                                                        data-ck="{{ dataCk }}"
+                                                                        data-psid="{{ p.id }}"
+                                                                        data-selId="{{ p.id }}" data-currency="₫">
+                                                                    <span>{{ dataTitle }}</span>
+                                                                   {{ iconShop | raw }}
+                                                                </a>
+                                                                {% set classWishlist = '' %}
+                                                                {% if p.id in wishlist | keys %}
+                                                                    {% set classWishlist = 'active' %}
+                                                                {% endif %}
+                                                                <a href="javascript:void(0)"
+                                                                   class="setWishlist btn-views btn-circle _addWishList {{ classWishlist }}"
+                                                                   title="{{ translate('Thêm vào yêu thích') }}" data-id="{{ p.id }}">
+                                                                    <i class="fa-light fa-heart"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% else %}
+                                <div class="alert alert-warning alert-dismissible margin-top-15 margin-bottom-20 section">
+                                    {{ translate('Sản phẩm đang được cập nhật.') }}
+                                </div>
+                            {% endif %}
+                            <div class="pagenav">
+                                {{ render_paginator(paginator) }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

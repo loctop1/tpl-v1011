@@ -1,0 +1,56 @@
+{% extends 'layout/layout' %}
+{% block meta %}
+    {{ headTitle('Đăng nhập').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="description" content="Đăng nhập">
+    <meta name="keywords" content="Đăng nhập">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Đăng nhập">
+    <meta property="og:type" content="article">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+
+{% block body %}
+    <div class="bodywrap">
+        <div class="bg-gray">
+            <section class="bread-crumb">
+                <div class="container">
+                    {% set br = [{'label': translate('Đăng nhập'), 'uri': '/user/signin'}] %}
+                    {{ render_breadcrumb(br) }}
+                </div>
+            </section>
+            <section class="section">
+                <div class="container">
+                    <div class="page_login">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 col-sm-12 col-xl-4 offset-0 offset-xl-4 offset-lg-4 offset-md-3 offset-xl-3 col-12">
+                                <div class="page-login pagecustome clearfix">
+                                    <div class="wpx">
+                                        <h1 class="title_heads a-center"><span>{{ translate('Đăng nhập') }}</span></h1>
+                                        <div id="login" class="section">
+                                            {{ partial('partial/form',{'form':form}) }}
+                                        </div>
+
+                                        <div class="block social-login--facebooks">
+                                            <div class="line-break">
+                                                <span>{{ translate('hoặc đăng nhập qua') }}</span>
+                                            </div>
+                                            <div class="loginBtn-container">
+                                                <a href="/user/fbsignin" class="loginBtn loginBtn--facebook">
+                                                    <i class="fa-brands fa-facebook-f"></i> Facebook
+                                                </a>
+
+                                                <a href="/user/ggsignin" class="loginBtn loginBtn--google">
+                                                    <i class="fa-brands fa-google-plus-g"></i> Google
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

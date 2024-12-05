@@ -1,0 +1,122 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Quản lí đơn hàng').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta property="og:title" content="Quản lí đơn hàng">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set level = 0 %}
+    {% set point = 0 %}
+    {% if user is not empty %}
+        {% set customer = getCustomerStore({'mobile':user.mobile}) %}
+        {% if customer is not empty %}
+            {% if customer.points > 0 %}
+                {% set point = customer.points %}
+            {% endif %}
+            {% set level = customer.levelName %}
+        {% endif %}
+    {% endif %}
+    <section class="section p-0 mb-3 user-profile">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    {% set buildBread  = [{'label': translate('Quản lí đơn hàng'), 'uri':'/order'}] %}
+                    {{ render_breadcrumb(buildBread ) }}
+                </div>
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <div class="bg-shadow">
+                                <div class="account-option">
+                                    <h5 class="title-account">{{ translate('trang tài khoản') }}</h5>
+                                    <div class="fw-bold mb-3">{{ translate('Xin chào,') }} <p
+                                                class="text-danger d-inline">{{ user.fullName ? user.fullName : customer.name }}</p></div>
+                                    <div class="mb-3">
+                                        <div class="text-warning">
+                                            <i class="fa-sharp fa-solid fa-trophy-star"></i>
+                                            {{ translate('Hạng thành viên: ') }}{{ level }}
+                                        </div>
+                                        <div class="text-info">
+                                            <i class="fa-solid fa-hundred-points"></i>
+                                            {{ translate('Điểm tích lũy: ') }}{{ point }}
+                                        </div>
+                                    </div>
+                                    <ul class="account-option_list">
+                                        <li><a href="/profile">{{ translate('Thông tin tài khoản') }}</a></li>
+                                        <li><a href="/order" class="active">{{ translate('Đơn hàng của bạn') }}</a></li>
+                                        <li><a href="/profile/changepassword">{{ translate('Đổi mật khẩu') }}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-9">
+                            <div class="bg-shadow">
+                                <div class="account-option">
+                                    <h5 class="title-head">{{ translate('đơn hàng của bạn') }}</h5>
+                                    <div class="fw-bold mb-3"></div>
+                                    {% if(paginator is not empty) %}
+                                        <table class="table table-bordered table-striped order-list text-center">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">{{ translate('Đơn hàng') }}</th>
+                                                <th scope="col">{{ translate('Ngày') }}</th>
+                                                <th scope="col">{{ translate('Địa chỉ') }}</th>
+                                                <th scope="col">{{ translate('Giá trị đơn hàng') }}</th>
+                                                <th scope="col">{{ translate('TT đơn hàng') }}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for order in paginator %}
+                                                {% set totalOrderPrice = 0 %}
+                                                {% set _order = orders[order.id] %}
+                                                {% set products = _order.products %}
+                                                {% if(products is not empty) %}
+                                                    {% for pOrder in products %}
+                                                        {% set totalOrderPrice = totalOrderPrice + (pOrder.quantity * pOrder.price) %}
+                                                    {% endfor %}
+                                                {% endif %}
+                                                <tr>
+                                                    <th scope="row">
+                                                        <a href="#" class="text-decoration-none _orderDetails" data-id="{{ order.id }}" data-bs-toggle="modal" data-bs-target="#modalOrderDetails">
+                                                            #{{ order.id }}</a>
+                                                    </th>
+                                                    <td>{{ order.createdDate | date("d/m/Y") }}</td>
+                                                    <td>{{ _order.customerAddress }}, {{ _order.options['districtName'] }}, {{ _order.options['cityName'] }}</td>
+                                                    <td>{{ totalOrderPrice | number_format(0) }}<sup>₫</sup></td>
+                                                    <td>{{ order.statuses[_order.status] }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    {% else %}
+                                        <div class="section-item p-5 bg-white text-center w-100">
+                                            <div class="fw-medium mt-4 mb-4">{{ translate('Bạn chưa có đơn hàng nào') }}!</div>
+                                            <a href="/" class="btn-no-cart">{{ translate('Tiếp tục mua sắm') }}</a>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Modal -->
+    <div class="modal fade" id="modalOrderDetails" tabindex="-1" aria-labelledby="modalOrderDetails" >
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-body _orderContent">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+
+        .table-detail th{
+            padding: 10px !important;
+        }
+    </style>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle(news.title | striptags).setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="{{ news.metaKeywords ?: news.title | striptags }}">
+    <meta name="description" content="{{ (news.metaDescription ?: news.title | striptags) }}">
+    <meta property="og:title" content="{{ news.metaTitle ?: news.title | striptags }}">
+    <meta property="og:url" content="{{ news.canonicalLink }}">
+    <meta property="og:image" content="{{ news.pictureUri }}">
+    <meta property="og:type" content="category">
+    <link rel="canonical" href="{{ news.canonicalLink }}">
+{% endblock %}
+{% block body %}
+    <div class="bodywrap">
+        <section class="bread-crumb">
+            <div class="container">
+                <ul class="breadcrumb">
+                    {% set buildBread = buildBreadcrumbs(newsCategory) %}
+                    {% set buildBread = buildBread | merge ([{'label': news.title,'uri': news.viewLink, 'class' : news.id}]) %}
+                    {{ render_breadcrumb(buildBread) }}
+                </ul>
+            </div>
+        </section>
+        <section class="blogpage">
+            <div class="container layout-article">
+                <div class="bg_blog">
+                    <article class="article-main">
+                        <div class="row">
+                            <div class="right-content col-lg-9 col-12">
+                                <div class="article-details bg-shadow clearfix">
+                                    <h1 class="article-title">{{ news.title }}</h1>
+                                    <div class="posts">
+                                        <div class="time-post f">
+                                            {{ news.createdDateTime }}
+                                        </div>
+                                    </div>
+
+                                    <div class="rte article-content-main">
+                                        {{ news.content | raw }}
+                                        {{ render_embedComment({
+                                            'type': 2,
+                                            'itemId': news.id,
+                                            'title': news.title,
+                                        }) }}
+                                    </div>
+                                </div>
+                                <div class="blog_related">
+                                    <div class="title">{{ translate('Bài viết mới nhất') }}</div>
+                                    {% set lastestNews= getHotNews({'limit':6,'categorId':news.categoryId}) %}
+                                    {% if(lastestNews is not empty) %}
+                                        <div class="row">
+                                            {% for i in lastestNews %}
+                                                <div class="col-lg-4 col-md-4 col-sm-6">
+                                                    <div class="item-blog">
+                                                        <div class="wrapper">
+                                                            <a class="block-thumb thumb"
+                                                               href="{{ i.viewLink }}"
+                                                               title="{{ i.title|raw }}">
+
+                                                                <img width="400" height="240"
+                                                                     class="lazyload duration-300"
+                                                                     src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                     data-src="{{ i.imageUri }}"
+                                                                     alt="{{ i.title|raw }}">
+
+                                                            </a>
+                                                            <div class="block-content">
+                                                                <h3>
+                                                                    <a href="{{ i.viewLink }}"
+                                                                       title="{{ i.title|raw }}"
+                                                                       class="line-clamp-2-new">{{ i.title|raw }}</a>
+                                                                </h3>
+                                                                <div class="article-content">
+                                                                    <div class="article-info">
+                                                                        <p class="time-post">
+                                                                            <i class="fa-regular fa-clock"></i>
+                                                                            <span>
+                                                                        {{ i.createdDateTime|date('d/m/Y') }}
+                                                                    </span>
+                                                                        </p>
+
+                                                                        <a href="{{ i.viewLink }}"
+                                                                           title="{{ translate('Đọc thêm') }}"
+                                                                           class="read-more">{{ translate('Đọc thêm') }}</a>
+
+                                                                    </div>
+
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="blog_left_base col-lg-3 col-12">
+                                <div class="side-right-stick">
+                                    {% set newsCategory = getNewsCategories() %}
+                                    {% if(newsCategory is not empty) %}
+                                        <div class="aside-content aside-content-blog">
+                                            <h2 class="title-head">
+                                                <span>{{ translate('Danh mục tin tức') }}</span>
+                                            </h2>
+                                            <nav class="nav-category">
+                                                <ul class="nav navbar-pills">
+                                                    {% for n in newsCategory %}
+                                                        <li class="nav-item  relative">
+                                                            <a title="{{ n.name }}" class="nav-link"
+                                                               href="{{ n.viewLink }}">{{ n.name }}</a>
+                                                        </li>
+                                                    {% endfor %}
+                                                </ul>
+                                            </nav>
+                                        </div>
+                                    {% endif %}
+
+                                    <div class="blog_noibat">
+                                        <h2 class="h2_sidebar_blog"
+                                            title="{{ translate('Tin tức nổi bật') }}">{{ translate('Tin tức nổi bật') }}
+                                        </h2>
+                                        <div class="blog_content">
+                                            {% set hotNews = getHotNews({'limit':4,'categorId':news.categoryId}) %}
+                                            {% if(hotNews is not empty) %}
+                                                {% for h in hotNews %}
+                                                    <div class="item clearfix">
+                                                        <div class="post-thumb">
+                                                            <a class="image-blog scale_hover"
+                                                               href="{{ h.viewLink }}"
+                                                               title="{{ h.title|raw }}">
+
+                                                                <img class="img_blog lazyload"
+                                                                     src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                     data-src="{{ h.imageUri }}"
+                                                                     alt="{{ h.title|raw }}"
+                                                                >
+
+                                                            </a>
+                                                        </div>
+                                                        <div class="contentright">
+                                                            <h3>
+                                                                <a title="{{ h.title|raw }}"
+                                                                   href="{{ h.viewLink }}">{{ h.title|raw }}
+                                                                </a>
+                                                            </h3>
+                                                            <p class="time-post">
+                                                                <span>
+                                                                    {{ h.createdDateTime|date('d/m/Y') }}
+                                                                </span>
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="blog_banner">
+                                        {% set banner_news = getCurrentBannerByCode('BANNER_NEWS',{'limit':1}) %}
+                                        {% if(banner_news is not empty) %}
+                                            {% for bn in banner_news %}
+                                                <a href="{{ bn.viewLink }}" title="{{ bn.name }}" class="duration-300">
+                                                    <img alt="{{ bn.name }}"
+                                                         width="440" height="660" class="lazyload"
+                                                         src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                         data-src="{{ bn.imageSrc }}">
+                                                </a>
+                                            {% endfor %}
+                                        {% else %}
+                                            <a href="javascript:void(0)" title="Banner" class="duration-300">
+                                                <img alt="Banner"
+                                                     width="440" height="660"
+                                                     src="https://dummyimage.com/400x600/163645/fff">
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </div>
+{% endblock %}

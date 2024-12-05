@@ -1,0 +1,90 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle(translate('Cập nhật thông tin khuyến mãi nhanh nhất')).setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="description" content="{{ translate('Cập nhật thông tin khuyến mãi nhanh nhất') }}">
+    <meta name="keywords" content="{{ translate('Nhận tin khuyến mãi') }}">
+    <meta property="og:title" content="{{ translate('Cập nhật thông tin khuyến mãi nhanh nhất') }}">
+    <meta property="og:description" content="{{ translate('Cập nhật thông tin khuyến mãi nhanh nhất') }}">
+    <meta property="og:keywords" content="{{ translate('Nhận tin khuyến mãi') }}">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+
+{% block body %}
+    <div class="bodywrap">
+        <div class="layout-collection">
+            <section class="bread-crumb">
+                <div class="container">
+                    <ul class="breadcrumb">
+                        {% set br = [{'label': translate('Khuyến mãi'), 'uri': '/promotion'}] %}
+                        {{ render_breadcrumb(br) }}
+                    </ul>
+                </div>
+            </section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-banner">
+                        {% set bc = getCurrentBannerByCode('BANNER_PROMOTION',{'limit':1}) %}
+                        {% if(bc is not empty) %}
+                            <a href="{{ bc.viewLink }}" title="{{ bc.name }}" class="duration-300  has-aspect-1">
+                                <img alt="Banner top" width="1250" height="306"
+                                     src="{{ bc.imagesrc }}">
+                            </a>
+                        {% else %}
+                            <a href="/" class="duration-300  has-aspect-1">
+                                <img alt="Banner top" width="1250" height="306"
+                                     src="https://dummyimage.com/1250x306/163645/fff">
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="col-12">
+                        <div class="col-title">
+                            <h1>{{ translate('Chương trình khuyến mại') }}</h1>
+                            <div class="title-separator">
+                                <div class="separator-center"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="block-collection col-lg-12 col-12">
+                        <div class="category-products products-view products-view-grid list_hover_pro">
+                            {% if promotions is not empty %}
+                                <div class="products-view products-view-grid list_hover_pro">
+                                    <div class="row">
+                                        {% for p in promotions %}
+                                            <div class="col-6 col-md-3">
+                                                <div class="item_product_main">
+                                                    <div class="variants product-action item-product-main duration-300"
+                                                         data-id="{{ p.id }}">
+                                                        <div class="product-thumbnail">
+                                                            <a href="{{ p.viewLink }}" class="image_thumb scale_hover"
+                                                               title="{{ p.name }}">
+                                                                <img src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                     data-src="{{ p.imageUri }}"
+                                                                     alt="{{ p.name }}"
+                                                                     class="lazyload duration-300">
+
+                                                            </a>
+                                                        </div>
+                                                        <div class="product-info">
+                                                            <div class="name-price">
+                                                                <h3 class="product-name line-clamp-2-new">
+                                                                    <a href="{{ p.viewLink }}"
+                                                                       title="{{ p.name }}">{{ p.name }}</a>
+                                                                </h3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Tra cứu đơn hàng').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="Tra cứu đơn hàng">
+    <meta name="description" content="Tra cứu đơn hàng">
+    <meta property="og:image" content="{{ getBusinessLogo() }}">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Tra cứu đơn hàng">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+{% endblock %}

@@ -1,0 +1,516 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle(product.name).setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="description" content="{{ product.metaDescription ?:product.name }}">
+    <meta name="keywords" content="{{ product.metaKeywords?:product.name }}">
+    <meta property="og:url" content="{{ product.canonicalLink }}">
+    <meta property="og:title" content="{{ product.metaTitle?:product.name }}">
+    <meta property="og:description" content="{{ product.metaDescription ?:product.name }}">
+    <meta property="og:image" content="{{ product.imageUri }}">
+    <meta property="og:type" content="website">
+    <link rel="canonical" href="{{ product.canonicalLink }}">
+{% endblock %}
+{% block body %}
+    {% set ivt = 0 %}
+    {% if product.inventory().calcAvailable() > 0 %}
+        {% set ivt = product.inventory().calcAvailable() %}
+    {% elseif product.available > 0 %}
+        {% set ivt = product.available %}
+    {% endif %}
+    {% set variableAttributes = product.variableAttributes %}
+    {% set flag = 0 %}
+    <div class="bodywrap">
+        <div class="bread-crumb">
+            <div class="container">
+                {% set buildBread = buildBreadcrumbs(category) %}
+                {% set buildBread = buildBread | merge ([{'label': product.name,'uri': product.viewLink, 'class' : product.id}]) %}
+                {{ render_breadcrumb(buildBread) }}
+            </div>
+        </div>
+        <div class="product layout-product">
+            <div class="container">
+                <div class="details-product">
+                    <div class="bg-shadow mb-4">
+                        <div class="row">
+                            <div class="col-lg-6 col-md-12 col-12 product-detail-left product-images">
+                                <div class="sticky">
+                                    <div class="product-image-block relative">
+                                        <div class="gallery-top slick-slider-container">
+                                            <div class="slick-container-top _slideMain">
+                                                {% if product.images %}
+                                                    {% for i in product.images %}
+                                                        <a href="{{ i.imageUri }}" class="slick-item"
+                                                           data-fancybox="gallery">
+                                                            <img src="{{ i.thumbnailUri }}" alt="{{ product.name }}">
+                                                        </a>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <img class="img-slider-main" src="{{ i.thumbnailUri }}"
+                                                         alt="{{ product.name }}">
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                        <div class="gallery-thumbs">
+                                            <div class="slick-container-thumb _slideThumb" data-vertical="true">
+                                                {% if product.images %}
+                                                    {% for i in product.images %}
+                                                        <div class="slick-items">
+                                                            <div class="p-100">
+                                                                <img class="img-slider-child"
+                                                                     src="{{ i.thumbnailUri }}"
+                                                                     alt="{{ product.name }}">
+                                                            </div>
+                                                        </div>
+                                                    {% endfor %}
+                                                {% else %}
+                                                    <div class="slick-items">
+                                                        <div class="p-100">
+                                                            <img class="img-slider-child" width="80" height="80"
+                                                                 src="{{ i.thumbnailUri }}" alt="{{ product.name }}">
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-12 col-12 details-pro">
+                                <h1 class="title-product">{{ product.name }}</h1>
+                                <div class="product-top clearfix">
+                                    <div class="sku-product clearfix">
+                                        <span class="variant-sku">{{ translate('Mã: ') }}
+                                        <span class="a-sku">{{ product.id }}</span></span>
+                                        <br>
+                                    </div>
+                                </div>
+                                <div class="inventory_quantity">
+                                    <span class="mb-break">
+                                        <span class="stock-brand-title">{{ translate('Thương hiệu:') }}</span>
+                                        <span class="a-vendor">
+                                            {{ product.brandName|raw }}
+                                        </span>
+                                    </span>
+                                    <span class="line">&nbsp;&nbsp;|&nbsp;&nbsp;</span>
+                                    <span class="mb-break">
+                                        <span class="stock-brand-title">{{ translate('Tình trạng:') }}</span>
+                                            <span class="a-stock"><span
+                                                        class="a-stock">  {{ ivt > 0 ? translate('Còn hàng') : translate('Hết hàng') }}</span></span>
+							        </span>
+                                </div>
+                                <div class="form-inline">
+                                    <div class="product-summary">
+                                        {% if product.productUnit %}
+                                            <input type="hidden" class="puInventory" value="{{ ivt }}">
+                                            <div class="productUnit" style="margin-top: 15px">
+                                                {% for unit in product.productUnit %}
+                                                    {% set qtt = ivt/unit.quantity|round(1, 'floor') %}
+                                                    <input class="_grProductUnit" style="vertical-align: text-bottom;"
+                                                           type="radio"
+                                                           data-price="{{ unit.price }}" data-qtt="{{ qtt }}"
+                                                           value="{{ unit.id }}"
+                                                           name="productUnit"><span
+                                                        style="padding-right: 10px">{{ unit.name }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        {% else %}
+                                            {% set color = variableAttributes['color'] %}
+                                            {% if color is not empty %}
+                                                {% set valuesColor = color.childValues %}
+                                                {% set numbCl = (valuesColor | length) %}
+                                                {% if (valuesColor is not null and numbCl > 0) %}
+                                                    {% set flag = flag + 1 %}
+                                                    <div class="p-line">
+                                                        <div class="p-line-title">{{ translate('Màu sắc') }}</div>
+                                                        <div class="p-line-content d-flex flex-wrap gap-2 req _colorSelect"
+                                                             data-column="{{ color.column }}">
+                                                            {% for attrValue in valuesColor %}
+                                                                {% set arrColor = [] %}
+                                                                {% set arrColor = arrColor|merge({ (color.column): attrValue.id }) %}
+                                                                {% set img = getAttrValueImage(arrColor,false, {'return':'image','product':product}) %}
+                                                                {% set pIdsAttrStr = getAttrValueImage(arrColor,true,{'product':product}) | json_encode() %}
+                                                                {% set pIdsAttrStr = pIdsAttrStr | replace({'[': '', ']': ''}) %}
+                                                                <a class="_pSelect p-type {{ (numbCl == 1) ?'active':'' }}"
+                                                                   data-psId="{{ pIdsAttrStr }}"
+                                                                   data-id="{{ attrValue.id }}"
+                                                                   data-src="{{ img }}">
+                                                                    {{ attrValue.name }}
+                                                                </a>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                            {% set size = variableAttributes['size'] %}
+                                            {% if size is not empty %}
+                                                {% set valuesSize = size.childValues %}
+                                                {% set numbS =  (valuesSize | length) %}
+                                                {% if(valuesSize is not null and numbS>0) %}
+                                                    {% set flag = flag + 1 %}
+                                                    <div class="p-line">
+                                                        <div class="p-line-title">{{ translate('Kích cỡ') }}</div>
+                                                        <div class="p-line-content d-flex flex-wrap gap-2 req _sizeSelect"
+                                                             data-column="{{ size.column }}">
+                                                            {% for attrValueC in valuesSize %}
+                                                                <a data-id="{{ attrValueC.id }}"
+                                                                   class="{{ ((numbS == 1) ? 'active' : '') }}">
+                                                                    {{ attrValueC.name }}
+                                                                </a>
+                                                            {% endfor %}
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="p-line">
+                                        <div class="p-line-title">{{ translate('Số lượng') }}</div>
+                                        <div class="p-line-title inventory-show">{{ ivt }} sản phẩm</div>
+                                    </div>
+
+                                    <div class="price-box clearfix">
+                                        {% set priceDiscount = product.priceAfterDiscount %}
+                                        {% if(product.contactPrice or product.price == 0) %}
+                                            <span class="text-danger _pDetailProduct">{{ translate('Liên hệ') }}</span>
+                                        {% elseif (priceDiscount > 0) %}
+                                            <span class="special-price">
+                                                <span class="price product-price _pDetailProduct">{{ priceDiscount|number_format(0) }}₫</span>
+                                            </span>
+                                            <span class="old-price">
+                                                <del class="price product-price-old _pSaleDetailProduct">
+                                                    {{ product.price|number_format(0) }}₫
+                                                </del>
+                                            </span>
+                                        {% elseif (product.oldPrice > 0) %}
+                                            <span class="special-price">
+                                                <span class="price product-price _pDetailProduct">{{ product.price|number_format(0) }}₫</span>
+                                            </span>
+                                            <span class="old-price">
+                                                <del class="price product-price-old _pSaleDetailProduct">
+                                                    {{ product.oldPrice|number_format(0) }}
+                                                </del>
+                                            </span>
+                                        {% else %}
+                                            <span class="special-price">
+                                                <span class="price product-price _pDetailProduct">{{ product.price|number_format(0) }}₫</span>
+                                            </span>
+                                        {% endif %}
+
+                                        {% if product.calcDiscountPercent > 0 %}
+                                            <span class="sale-off">{{ product.calcDiscountPercent }}%</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="form-product">
+                                        <div class="boz-form ">
+                                            <div class="flex-quantity">
+                                                <div class="custom custom-btn-number show">
+                                                    <span>{{ translate('Số lượng: ') }}</span>
+                                                    <div class="input_number_product">
+                                                        <button class="btn_num num_1 button button_qty subtract"
+                                                                type="button">-
+                                                        </button>
+                                                        <input aria-label="quantity" type="text" id="qtym"
+                                                               name="quantity" value="1"
+                                                               maxlength="10" class="form-control prd_quantity">
+                                                        <button class="btn_num num_2 button button_qty plus"
+                                                                type="button">+
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                                <div class="btn-mua button_actions clearfix">
+                                                    {% if(ivt <= 0) %}
+                                                        <a class="btn-submit add-cart _addToCart"
+                                                           data-psid="{{ product.id }}" data-currency="₫">
+                                                            {{ translate('Sản phẩm tạm hết hàng') }}
+                                                        </a>
+                                                    {% else %}
+                                                        {% if (flag > 0) %}
+                                                            <a class="btn-submit buy-now _buyNow btn btn-primary"
+                                                               title="{{ translate('Vui lòng chọn màu sắc hoặc kích cỡ') }}!"
+                                                               data-ck="0"
+                                                               data-psid="{{ product.id }}"
+                                                               data-selId="{{ product.id }}" data-currency="₫">
+                                                                {{ translate('Mua ngay') }}
+                                                            </a>
+                                                            <a class="btn-submit add-cart _addToCart btn btn_base normal_button add_to_cart btn-cart btn-extent"
+                                                               title="{{ translate('Vui lòng chọn màu sắc hoặc kích cỡ') }}!"
+                                                               data-ck="0"
+                                                               data-psid="{{ product.id }}"
+                                                               data-selId="{{ product.id }}" data-currency="₫">
+
+                                                                {{ translate('Thêm vào giỏ') }}
+                                                            </a>
+
+                                                        {% else %}
+                                                            <a class="btn-submit buy-now _buyNow btn btn-primary"
+                                                               data-ck="1" data-psid="{{ product.id }}"
+                                                               data-selId="{{ product.id }}" data-currency="₫">
+                                                                {{ translate('Mua ngay') }}
+                                                            </a>
+                                                            <a class="btn-submit add-cart _addToCart btn btn_base normal_button add_to_cart btn-cart btn-extent"
+                                                               data-ck="1" data-psid="{{ product.id }}"
+                                                               data-selId="{{ product.id }}" data-currency="₫">
+
+                                                                {{ translate('Thêm vào giỏ') }}
+                                                            </a>
+                                                        {% endif %}
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bottom-product">
+                                    <ul class="social-media">
+                                        <li class="title">
+                                            <i class="fa-thin fa-share-nodes"></i>
+                                            {{ translate('Chia sẻ') }}
+                                        </li>
+                                    </ul>
+                                    <div class="product-wish">
+                                        {% set wishlist = jsonDecode(getCookies('WISHLIST_STORE_PRODUCT')) %}
+                                        {% set classWishlist = '' %}
+                                        {% set wishlistText = 'Thêm vào yêu thích' %}
+                                        {% if product.id in wishlist | keys %}
+                                            {% set classWishlist = 'active' %}
+                                            {% set wishlistText = 'Bỏ yêu thích' %}
+                                        {% endif %}
+                                        <a href="javascript:void(0)" data-id="{{ product.id }}"
+                                           class=" _addWishList btn-submit add-like {{ classWishlist }}">
+                                            <i class="fal fa-heart"></i>
+                                            <span class="_addLike">{{ translate(wishlistText) }}</span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        {% if couponCode is not empty %}
+                            <div class="col-12 product-coupons mb-4">
+                                <div class="bg-shadow">
+                                    <div class="title">{{ translate('Khuyến mãi dành cho bạn') }}</div>
+                                    <div class="swiper_coupons swiper-container">
+                                        <div class="swiper-wrapper slick-coupon">
+
+                                            <div class="swiper-slide">
+                                                <div class="box-coupon">
+                                                    <div class="mask-ticket"></div>
+                                                    <div class="image">
+                                                        <img alt="coupon" width="88" height="88" class="lazyload"
+                                                             src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                             data-src="{{ linkTemplateImage('/img/img_coupon.png') }}">
+                                                    </div>
+                                                    <div class="content_wrap">
+                                                        <a title="{{ translate('Chi tiết') }}" href="javascript:void(0)"
+                                                           class="info-button"
+                                                           data-coupon="{{ couponCode.code }}">
+                                                            <i class="fa-solid fa-info"></i>
+                                                        </a>
+                                                        <div class="content-top">
+                                                            <span class="coupon-codes">{{ couponCode.code | raw }}</span>
+                                                            <span class="line-clamp line-clamp-2">Giảm: {{ couponCode.options.couponValue }}₫</span>
+                                                        </div>
+                                                        <div class="content-bottom">
+                                                            <div class="coupon-code js-copy"
+                                                                 title="{{ translate('Sao chép') }}">
+                                                                {{ translate('Sao chép') }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                        <div class="col-12 mb-4">
+                            <div class="bg-shadow">
+                                <div class="row">
+                                    <div class="col-12 product-review-details col-lg-8">
+                                        <div class="product-tab e-tabs not-dqtab">
+                                            <ul class="tabs tabs-title clearfix">
+                                                <li class="tab-linke active" data-tab="#tab-1">
+                                                    <h3>{{ translate('Thông tin chi tiết') }}</h3>
+                                                </li>
+
+                                                <li class="tab-linke" data-tab="#tab-2">
+                                                    <h3>{{ translate('Mô tả sản phẩm') }}</h3>
+                                                </li>
+                                            </ul>
+
+
+                                            <div class="tab-float">
+                                                {% if(product.content) %}
+                                                    <div id="tab-1" class="tab-content-view content_extab active"
+                                                         data-tab="1">
+                                                        <div class="rte product_getcontent product-review-content">
+                                                            <div class="ba-text-fpt has-height">
+                                                                {{ product.content | raw }}
+
+                                                            </div>
+
+                                                            <div class="show-more hidden-lg hidden-md hidden-sm">
+                                                                <div class="btn btn-primary btn-default btn--view-more duration-300">
+                                                                    <span class="more-text ">{{ translate('Xem thêm') }}
+                                                                        <i class="fa-sharp fa-solid fa-caret-down"></i>
+                                                                    </span>
+                                                                    <span class="less-text">{{ translate('Thu gọn') }}
+                                                                       <i class="fa-sharp fa-solid fa-caret-up"></i>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+
+
+                                                        </div>
+                                                    </div>
+                                                {% endif %}
+
+                                                {% if(product.description) %}
+                                                    <div id="tab-2" class="tab-content-view content_extab" data-tab="2">
+                                                        <div class="rte">
+                                                            {{ product.description | raw }}
+                                                        </div>
+                                                    </div>
+
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {% set history = getHistory({'limit': 5}) %}
+                                    {% if(history is not empty) %}
+                                        <div class="col-lg-4 col-12 product-sidebar">
+                                            <div class="sticky-box">
+                                                <div class="section-viewed-product recent-page-viewed">
+                                                    <h2><span>{{ translate('Sản phẩm đã xem') }}</span></h2>
+                                                    <div class="product-viewed-content">
+                                                        {% for p in history %}
+                                                            {% set priceDiscount = p.priceAfterDiscount %}
+                                                            <div class="product-view">
+                                                                <a class="image_thumb"
+                                                                   title="{{ p.name }}">
+                                                                    <img width="370" height="480" class="lazyload"
+                                                                         src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                         data-src="{{ p.thumbnailUri }}"
+                                                                         alt="{{ p.name }}">
+                                                                </a>
+                                                                <div class="product-info">
+                                                                    <h3 class="product-name"><a
+                                                                                href="{{ p.viewLink }}"
+                                                                                title="{{ p.name }}"
+                                                                                class="line-clamp line-clamp-3-new">{{ p.name }}</a>
+                                                                    </h3>
+                                                                    <div class="price-box">
+                                                                        {% if(p.contactPrice or (p.price == 0)) %}
+                                                                            <div class="layout-public-price flex-wrap gap-1">
+                                                                                <div class="price">
+                                                                                    {{ translate('Liên hệ') }}
+                                                                                </div>
+                                                                                <div class="sold-out"></div>
+                                                                            </div>
+                                                                        {% elseif (priceDiscount > 0) %}
+                                                                            <span class="price">{{ priceDiscount|number_format(0) }}₫</span>
+                                                                            <span class="compare-price">{{ p.price|number_format(0) }}₫</span>
+                                                                        {% elseif (p.oldPrice > 0) %}
+                                                                            <span class="price">{{ p.price|number_format(0) }}₫</span>
+                                                                            <span class="compare-price">{{ p.oldPrice|number_format(0) }}₫</span>
+                                                                        {% else %}
+                                                                            <span class="price">{{ p.price|number_format(0) }}₫</span>
+                                                                        {% endif %}
+
+
+                                                                    </div>
+                                                                    <a class="view-more"
+                                                                       href="{{ p.viewLink }}"
+                                                                       title="{{ translate('Xem chi tiết') }}">{{ translate('Xem chi tiết') }}</a>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% set relatedProduct = searchProducts({'limit':10, 'categoryId':product.categoryId}) %}
+                        {% if relatedProduct is not empty %}
+                            <div class="col-12 product-related product-swipers mb-4">
+                                <div class="bg-shadow">
+                                    <h2>{{ translate('Sản phẩm liên quan') }}</h2>
+                                    <div class="swiper_product_related swiper-container swiper-container-initialized swiper-container-horizontal swiper-container-pointer-events">
+                                        <div class="swiper-wrapper" style="transform: translate3d(0px, 0px, 0px);">
+                                            <div class="swiper-slide slider_same_product swiper-slide-active">
+                                                {% for same_p in relatedProduct %}
+                                                    {% set priceDiscount = same_p.priceAfterDiscount %}
+                                                    <div class="item_product_main" style="margin-right: 10px;">
+                                                        <div class="variants product-action item-product-main duration-300">
+                                                            {% if(same_p.calcDiscountPercent > 0) %}
+                                                                <span class="flash-sale">-{{ same_p.calcDiscountPercent }}%</span>
+                                                            {% endif %}
+                                                            {% if(same_.getOption('psGifts')) %}
+                                                                {% if(same_p.promotionContent) %}
+                                                                    {% set progressText = 'Kèm quà tặng' %}
+                                                                    <div class="tag-promo"
+                                                                         title="{{ progressText }}">
+                                                                        <i class="fa-duotone fa-solid fa-gift"></i>
+                                                                        <div class="promotion-content">
+                                                                            {{ progressText }}
+                                                                        </div>
+                                                                    </div>
+                                                                {% endif %}
+                                                            {% endif %}
+                                                            <div class="product-thumbnail">
+                                                                <a class="image_thumb scale_hover"
+                                                                   href="{{ same_p.viewLink }}"
+                                                                   title="{{ same_p.name }}">
+                                                                    <img class="lazyload duration-300"
+                                                                         src="{{ linkSystemImage('/images/grey.gif') }}"
+                                                                         data-src="{{ same_p.thumbnailUri }}"
+                                                                         alt="{{ same_p.name }}">
+                                                                </a>
+                                                            </div>
+                                                            <div class="product-info">
+                                                                <div class="name-price">
+                                                                    <h3 class="product-name line-clamp-2-new">
+                                                                        <a href="{{ same_p.viewLink }}"
+                                                                           title="{{ same_p.name }}">{{ same_p.name }}</a>
+                                                                    </h3>
+                                                                    <div class="product-price-cart">
+                                                                        {% if(same_p.contactPrice or (same_p.price == 0)) %}
+                                                                            <div class="pro-item-price">
+                                                                                <span class="price-new text-danger fw-bold">{{ translate('Liên hệ') }}</span>
+                                                                            </div>
+                                                                        {% elseif(same_p.priceDiscount > 0) %}
+                                                                            <span class="price">{{ priceDiscount |number_format(0) }}₫</span>
+                                                                            <span class="compare-price">{{ same_p.price | number_format(0) }}₫</span>
+                                                                        {% elseif(same_p.oldPrice > 0) %}
+                                                                            <span class="price">{{ same_p.price|number_format(0) }}₫</span>
+                                                                            <span class="compare-price">{{ same_p.oldPrice|number_format(0) }}₫</span>
+                                                                        {% else %}
+                                                                            <span class="price">{{ same_p.price|number_format(0) }}₫</span>
+                                                                        {% endif %}
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,121 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle(album.name).setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="{{ album.metaKeywords ?: album.name }}">
+    <meta name="description" content="{{ album.metaDescription ?: album.Name }}">
+    <meta property="og:title" content="{{ album.metaTitle ?: album.Name }}">
+    <meta property="og:url" content="{{ album.canonicalLink }}">
+    <meta property="og:image" content="{{ album.imageUri }}">
+    <meta property="og:type" content="category">
+    <link rel="canonical" href="{{ album.canonicalLink }}">
+{% endblock %}
+
+{% block body %}
+    <div class="app-main-content pt-3 pb-3">
+        <div class="container">
+            {% set buildBread = buildBreadcrumbs(albumCategory) %}
+            {% set buildBread = buildBread | merge ([{'label': album.name,'uri': album.viewLink, 'class' : album.id}]) %}
+            {{ render_breadcrumb(buildBread) }}
+        </div>
+        <div class="main-album">
+           <div class="container">
+               <img src="{{ album.thumbnailUri }}" alt="{{ album.name }}">
+               <div class="album-content">
+                   {{ album.content | raw }}
+               </div>
+           </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="album-single-grid p-3">
+                        {% set fetchAllItem = fetchAllItemAlbum(album.id) %}
+                        {% if fetchAllItem is not empty %}
+                            {% for item in  fetchAllItem %}
+                                {% set tagItem = getAlbumTag(item.id) %}
+                                <div class="album-item mb-4 position-relative">
+                                    <img src="{{ item.imageUri }}" alt="{{ item.name }}">
+                                </div>
+                                {% if tagItem is not empty %}
+                                    <div class="list-product-album row row-cols-md-4 row-cols-sm-2 row-cols-2">
+                                        {% for tag in tagItem %}
+                                            {% set product = tag.product %}
+                                            {% if product is not empty %}
+                                                {% for p in product %}
+                                                    {% set priceDiscount = p.priceAfterDiscount %}
+                                                    {% set percent = p.calcDiscountPercent %}
+                                                    <div class="product-item" data-id="{{ p.id }}">
+                                                        <div class="product-img">
+                                                            <a class="img-main" href="{{ p.viewLink }}">
+                                                                <img src="{{ p.thumbnailUri }}"
+                                                                     alt="{{ p.name }}">
+                                                            </a>
+                                                        </div>
+                                                        <div class="product-info">
+                                                            <a class="product-name"
+                                                               href="{{ p.viewLink }}">{{ p.name }}</a>
+                                                            <div class="product-price d-flex align-items-center">
+                                                                {% if(p.contactPrice or (p.price == 0)) %}
+                                                                    <p>
+                                                                        <span class="product-price--current tp_product_price">{{ translate('Liên hệ') }} </span>
+                                                                    </p>
+                                                                {% elseif (priceDiscount > 0) %}
+                                                                    <p>
+                                                                        <span class="product-price--current tp_product_price">{{ priceDiscount|number_format(0) }}<sup>₫</sup></span>
+                                                                    </p>
+                                                                    <p>
+                                                                        <del class="product-price--origin tp_product_price_old">
+                                                                            {{ p.price|number_format(0) }}
+                                                                            <sup>₫</sup>
+                                                                        </del>
+                                                                    </p>
+                                                                {% else %}
+                                                                    <p>
+                                                                        <span class="product-price--current tp_product_price">{{ p.price|number_format(0) }}<sup>₫</sup></span>
+                                                                    </p>
+                                                                    {% if (p.oldPrice > 0) %}
+                                                                        <p>
+                                                                            <del class="product-price--origin tp_product_price_old">
+                                                                                {{ p.oldPrice|number_format(0) }}
+                                                                                <sup>₫</sup>
+                                                                            </del>
+                                                                        </p>
+                                                                    {% endif %}
+                                                                {% endif %}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                {% endfor %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                </div>
+                {% set relatedAlbum = searchAlbum({'limit':6,'categoryId':album.categoryId}) %}
+                {% if relatedAlbum is not empty %}
+                    <div class="col-12 mt-3">
+                        <div style="background: #fff" class="p-3">
+                            <div class="title-suggest-album">
+                                <h3 class="text-center pb-2">{{ translate('Bộ sưu tập') }}</h3>
+                            </div>
+                            <div class="list-suggest-album">
+                                {% for rl in relatedAlbum %}
+                                    <div class="item-sug-album">
+                                        <a href="{{ rl.viewLink }}">
+                                            <img width="400" src="{{ rl.imageUri }}"
+                                                 alt="{{ rl.name }}">
+                                            <h4 class="pt-2" style="font-size: 15px">{{ rl.name }}</h4>
+                                        </a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,204 @@
+{% set products = serviceCart().productList %}
+{% set quantity = serviceCart().totalQuantities %}
+{% set totalCartMoney = serviceCart().totalMoney %}
+{% set totalWishList = jsonDecode(getWishlistCookie() | length) %}
+
+<header class="header">
+    <div class="topbar">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-9 header-promo">
+
+                </div>
+                <div class="col-lg-3 header-hotline sm-hidden">
+                    <a title="Điện thoại: {{ getKeyContentValue('HOTLINE') }}"
+                       href="tel:{{ getKeyContentValue('HOTLINE') }}">
+                        <i class="fa-light fa-messages-question"></i>
+
+                        <div class="text-box">
+                            <span class="acc-text-small">{{ translate('Tư vấn mua hàng') }}</span>
+                            <span class="acc-text">{{ getKeyContentValue('HOTLINE') | default('Đường dây nóng') }}
+                            </span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main-header">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-6 col-md-4 col-lg-3 header-logo">
+                    <a href="/" class="logo-wrapper">
+                        <img src="{{ getBusinessLogo() }}" alt="Logo">
+
+                    </a>
+                </div>
+                <div class="col-12 col-md-12 col-lg-6 header-mid">
+                    <div class="list-top-item header_tim_kiem">
+                        <form id="_searchForm" action="/search" method="get"
+                              class="header-search-form input-group search-bar"
+                              role="search">
+                            <input name="q" class="input-group-field auto-search search-auto form-control _txtSearch"
+                                   placeholder="{{ translate('Tìm sản phẩm...') }}" type="text" autocomplete="off"
+                                   required>
+                            <button type="submit" class="btn icon-fallback-text"
+                                    aria-label="{{ translate('Tìm kiếm') }}">
+                                <i class="fa-sharp fa-regular fa-magnifying-glass"></i>
+                            </button>
+                            <div id="searchFolding" class="_searchFolding"></div>
+                        </form>
+
+                    </div>
+                </div>
+                <div class="col-6 col-md-8 col-lg-3 header-right">
+                    <div class="sudes-header-stores sm-hidden">
+                        <a href="/he-thong-cua-hang" title="{{ translate('Cửa hàng') }}">
+                            <span class="box-icon">
+                               <i class="fa-light fa-location-dot"></i>
+                            </span>
+                            <span class="item-title sm-hidden">{{ translate('Cửa hàng') }}</span>
+                        </a>
+                    </div>
+                    <div class="sudes-header-iwish sm-hidden">
+                        <a href="/wishlist" title="{{ translate('Yêu thích') }}">
+                            <span class="box-icon">
+                               <i class="fa-light fa-heart"></i>
+                                <span class="js-wishlist-count">{{ totalWishList }}</span>
+                            </span>
+                            <span class="item-title sm-hidden">{{ translate('Yêu thích') }}</span>
+                        </a>
+                    </div>
+                    <div class="sudes-header-account header-action_account">
+                        <a href="javascript:void(0)" class="header-account" aria-label="{{ translate('Tài khoản') }}"
+                           title="{{ translate('Tài khoản') }}">
+                           <span class="box-icon">
+                                <i class="fa-light fa-user"></i>
+
+                               <i class="fa-thin fa-chevron-down"></i>
+                           </span>
+                            <span class="item-title sm-hidden">{{ translate('Tài khoản') }}</span>
+                        </a>
+
+                        {% if (hasIdentity() is not empty) %}
+                            <ul>
+                                <li class="li-account">
+                                    <a href="/profile" title="{{ translate('Tài khoản') }}">
+                                        <i class="fa-light fa-user"></i>
+                                        {{ translate('Tài khoản') }}
+                                    </a>
+                                </li>
+                                <li class="li-account">
+                                    <a href="/user/signout" title="{{ translate('Tài khoản') }}">
+                                        <i class="fa-solid fa-right-to-bracket"></i>
+                                        {{ translate('Đăng xuất') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        {% else %}
+                            <ul>
+                                <li class="li-account">
+                                    <a href="/user/signin" title="{{ translate('Đăng nhập') }}">
+                                        <i class="fa-sharp fa-light fa-arrow-right-to-bracket"></i>
+                                        {{ translate('Đăng nhập') }}
+                                    </a>
+                                </li>
+                                <li class="li-account">
+                                    <a href="/user/signup" title="{{ translate('Đăng kí') }}">
+                                        <i class="fa-light fa-user-plus"></i>
+                                        {{ translate('Đăng kí') }}
+                                    </a>
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="sudes-header-cart header-action_cart _miniCart">
+                    </div>
+                    <button class="menu-icon md-hidden" aria-label="Menu" id="btn-menu-mobile" title="Menu">
+                        <i class="fa-sharp fa-light fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="header-menu">
+        <div class="container">
+            <div class="navigation-horizontal overflow">
+                <div class="title_menu md-hidden">
+                    <ul id="tabs-menu-mb">
+                        <li class="tab-link active" data-tab="tab-menu-1">{{ translate('Danh mục') }}</li>
+                        <li class="tab-link" data-tab="tab-menu-2">{{ translate('Menu') }}</li>
+                    </ul>
+                    <div class="close-mb-menu">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-lg-3 sudes-cate-header tab-content-mb active" id="tab-menu-1">
+                        <div class="title">
+                            <i class="fa-sharp fa-light fa-grid-2-plus icon-left"></i>
+
+
+                            <span>{{ translate('Danh mục sản phẩm') }}</span>
+
+                            <i class="fa-regular fa-chevron-down icon-right"></i>
+                        </div>
+                        <div class="sudes-list-cate" data-section="header-nav-cate">
+                            {% include 'other/menu' %}
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-12 col-lg-9 sudes-main-header tab-content-mb" id="tab-menu-2">
+                        {% if(menuIsExisted({'type': 'header' })) %}
+                            {% include 'other/menu_custom' %}
+                        {% endif %}
+                        <div class="control-menu">
+                            <a href="#" id="prev">
+                                <i class="fa-regular fa-chevron-left"></i>
+                            </a>
+                            <a href="#" id="next">
+                                <i class="fa-regular fa-chevron-right"></i>
+                            </a>
+                        </div>
+                        <div class="button-promo">
+                            <a href="/promotion" title="{{ translate('Hot deal') }}" class="duration-300">
+                                <img src="{{ linkTemplateImage('/img/btn_promotion_icon.png') }}"
+                                     alt="{{ translate('Hot deal') }}">
+                                <span>{{ translate('Hot deal') }}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <ul class="md-hidden list-menu-account">
+                    <li class="li-account">
+                        <a href="" class="promo" title=" {{ translate('Hot deal') }}">
+                            <img class="lazyload"
+                                 src="{{ linkSystemImage('/images/grey.gif') }}"
+                                 data-src="{{ linkTemplateImage('/img/btn_promotion_icon.png') }}"
+                                 alt="Hot deal">
+                            {{ translate('Hot deal') }}
+                        </a>
+                    </li>
+                    <li class="li-account"><a href="/wishlist" class="pro">
+                            <i class="fa-light fa-heart"></i>
+
+                            {{ translate('Danh sách Yêu thích') }}
+
+                            <span class="js-wishlist-count">{{ totalWishList }}</span>
+                        </a></li>
+                    <li class="li-account"><a href="/he-thong-cua-hang" title="{{ translate('Cửa hàng') }}">
+                            <i class="fa-light fa-location-dot"></i>
+                            {{ translate('Cửa hàng') }}
+                        </a></li>
+                    <li class="li-account"><a title="Điện thoại: {{ getKeyContentValue('HOTLINE') }}"
+                                              href="tel:{{ getKeyContentValue('HOTLINE') }}">
+                            <i class="fa-light fa-phone-volume"></i>
+                            Hotline: <span class="acc-text">{{ getKeyContentValue('HOTLINE') }}</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="mobile-nav-overflow">
+    </div>
+</header>

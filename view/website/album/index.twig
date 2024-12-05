@@ -1,0 +1,40 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Album').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta property="og:title" content="Album">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+
+{% block body %}
+    <div class="app-main-content pt-3 pb-3">
+        <div class="container">
+            {% set br = [{'label': translate('Bộ sưu tập'), 'uri': '/album'}] %}
+            {{ render_breadcrumb(br) }}
+            <div class="section-item section-album d-flex flex-wrap">
+                {% if(albums.currentModels) %}
+                    {% for a in albums.currentModels %}
+                        {%if(a.extraContent)%}
+                            {% set description = a.extraContent['description'] %}
+                        {%endif%}
+                        <a class="layout-album-item" href="{{a.viewLink}}">
+                            <img alt="{{ a.name }}" class="layout-img lazyload" src="{{ linkSystemImage('/images/grey.gif') }}" data-src="{{ a.thumbnailUri  }}">
+                            <div class="layout-content">
+                                <div class="layout-name">{{ a.name }}</div>
+                            </div>
+                        </a>
+                    {% endfor %}
+                    <div class="container mt-3 mb-3">
+                        <div class="text-center">
+                            {{ render_paginator(paginator) }}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="section-item p-5 bg-white text-center w-100">
+                        <div class="fw-medium mt-4 mb-4">{{ translate('Không có kết quả nào phù hợp') }}!</div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,216 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Giỏ hàng').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="Giỏ hàng">
+    <meta name="description" content="Giỏ hàng">
+    <meta property="og:image" content="{{ getBusinessLogo() }}">
+    <meta property="og:title" content="Giỏ hàng">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set products = serviceCart().productList %}
+    {% set totalCartMoney = serviceCart().totalMoney %}
+    <div class="bodywrap">
+        <section class="bread-crumb">
+            <div class="container">
+                {% set br = [{'label': translate('Thanh toán'), 'uri': '/cart/checkout'}] %}
+                {{ render_breadcrumb(br) }}
+            </div>
+        </section>
+        {% if(products is not empty) %}
+            <section class="main-cart-page main-container col1-layout">
+                <div class="main container cartpcstyle">
+                    <div class="wrap_background_aside mb-4">
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-7 col-12 col-cart-left mb-2">
+                                <div class="bg-shadow">
+                                    <div class="header-cart">
+                                        <div class="title-block-page">
+                                            <h1 class="title_cart">
+                                                <span>{{ translate('Giỏ hàng') }}</span>
+                                            </h1>
+                                        </div>
+                                    </div>
+                                    <div class="cart-page d-xl-block d-none">
+                                        <div class="drawer__inner">
+                                            <div class="CartPageContainer">
+
+                                                <div class="cart ajaxcart cartpage">
+                                                    <div class="cart-header-info">
+                                                        <div>{{ translate('Sản phẩm') }}</div>
+                                                        <div>{{ translate('Đơn giá') }}</div>
+                                                        <div>{{ translate('Số lượng') }}</div>
+                                                        <div>{{ translate('Thành tiền') }}</div>
+                                                    </div>
+                                                    <div class="ajaxcart__inner ajaxcart__inner--has-fixed-footer cart_body items">
+                                                        {% for p in products %}
+                                                            {% set textUnit = '' %}
+                                                            {% if p.productUnit %}
+                                                                {% set textUnit = '(' ~ p.productUnit.name ~ ')' %}
+                                                            {% endif %}
+                                                            {% set moneyDiscount = p.priceAfterDiscount %}
+                                                            {% set moneyTotal = p.price * p.quantity %}
+                                                            {% if (moneyDiscount > 0) %}
+                                                                {% set moneyTotal = moneyDiscount * p.quantity %}
+                                                            {% endif %}
+                                                            <div class="ajaxcart__row">
+                                                                <div class="ajaxcart__product cart_product"
+                                                                     data-line="1">
+                                                                    <a href="{{ p.viewLink }}"
+                                                                       class="ajaxcart__product-image cart_image"
+                                                                       title="{{ p.name }}">
+                                                                        <img src="{{ p.thumbnailUri }}"
+                                                                             alt="{{ p.name }}">
+                                                                    </a>
+                                                                    <div class="grid__item cart_info">
+                                                                        <div class="ajaxcart__product-name-wrapper cart_name">
+                                                                            <a href="{{ p.viewLink }}"
+                                                                               class="ajaxcart__product-name h4 line-clamp line-clamp-2-new"
+                                                                               title="{{ p.name }}"> {{ p.name }} </a>
+                                                                            <span class="ajaxcart__product-meta variant-title">{{ textUnit }}</span>
+                                                                            <a class="cart__btn-remove remove-item-cart ajaxifyCart--remove"
+                                                                               data-id="{{ p.id }}">
+                                                                                Xóa
+                                                                            </a>
+                                                                        </div>
+                                                                        <div class="grid">
+                                                                            {% if(p.contactPrice or (p.price == 0)) %}
+                                                                                <div class="grid__item one-half cart_prices">
+                                                                                    {{ translate('Liên hệ') }}
+                                                                                </div>
+                                                                            {% elseif (moneyDiscount > 0) %}
+                                                                                <div class="special-price">
+                                                                                    <span class="price product-price">{{ moneyDiscount|number_format(0) }}₫</span>
+                                                                                </div>
+                                                                            {% else %}
+                                                                                <div class="grid__item one-half text-right cart_prices">
+                                                                                    <span class="cart-price">{{ p.price|number_format(0) }}₫</span>
+                                                                                </div>
+                                                                                {% if (p.oldPrice > 0) %}
+                                                                                    <div class="special-price"><span
+                                                                                                class="price product-price text-decoration-line-through">{{ p.oldPrice|number_format(0) }}₫</span>
+                                                                                    </div>
+                                                                                {% endif %}
+                                                                            {% endif %}
+                                                                        </div>
+                                                                        <div class="grid">
+                                                                            <div class="grid__item one-half cart_select">
+                                                                                <div class="ajaxcart__qty input-group-btn">
+                                                                                    <button type="button"
+                                                                                            class="ajaxcart__qty-adjust ajaxcart__qty--minus items-count _subtract"
+                                                                                            data-id="{{ p.id }}"
+                                                                                            data-qty="0"
+                                                                                            data-line="1"
+                                                                                            aria-label="-"> -
+                                                                                    </button>
+                                                                                    <input type="text"
+                                                                                           class="ajaxcart__qty-num number-sidebar _productQtt_{{ p.id }}"
+                                                                                           maxlength="{{ p.inventory.available }}"
+                                                                                           pattern="[0-9]*"
+                                                                                           data-id="{{ p.id }}"
+                                                                                           value="{{ p.quantity }}"/>
+                                                                                    <button type="button"
+                                                                                            class="ajaxcart__qty-adjust ajaxcart__qty--plus items-count _plus"
+                                                                                            data-id="{{ p.id }}"
+                                                                                            data-line="1"
+                                                                                            data-qty="2" aria-label="+">
+                                                                                        +
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="grid justify-right">
+                                                                            <div class="grid__item one-half text-right cart_prices">
+                                                                                <span class="cart-price">{{ moneyTotal | number_format(0) }}₫</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        {% endfor %}
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="cart-mobile-page d-block d-xl-none">
+                                        <div class="CartMobileContainer"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xl-4 col-lg-5 col-12 col-cart-right">
+                                <div class="sticky">
+                                    <div class="bg-shadow margin-bottom-20">
+                                        <div class="ajaxcart__footer">
+                                            <div class="checkout-header">
+                                                {{ translate('Thông tin đơn hàng') }}
+                                            </div>
+                                            <div class="checkout-body">
+                                                <div class="summary-total">
+
+                                                    <div class="content-items">
+                                                        <div class="item-content-left">{{ translate('Tổng tiền') }}</div>
+                                                        <div class="item-content-right"><span
+                                                                    class="total-price">{{ totalCartMoney|number_format(0) }}₫</span>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="summary-action">
+                                                    <p>{{ translate('Phí vận chuyển sẽ được tính ở trang thanh toán.') }}</p>
+                                                    <p>{{ translate('Bạn cũng có thể nhập mã giảm giá ở trang thanh toán.') }}</p>
+                                                </div>
+
+
+                                                <div class="summary-button">
+                                                    <div class="cart__btn-proceed-checkout-dt">
+                                                        <a href="/cart/checkout"
+                                                           class="button btn btn-default cart__btn-proceed-checkout btn-primary duration-300"
+                                                           data-psid="{{ product.id }}" data-selId="{{ product.id }}"
+                                                           title="{{ translate('Thanh toán ngay') }}">
+                                                            {{ translate('Thanh toán ngay') }}
+                                                        </a>
+                                                    </div>
+                                                    <a class="return_buy btn btn-extent duration-300"
+                                                       title="{{ translate('Tiếp tục mua hàng') }}"
+                                                       href="/product">{{ translate('Tiếp tục mua
+                                                        hàng') }}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% else %}
+            <section class="main-cart-page main-container col1-layout is-empty">
+                <div class="main container cartpcstyle">
+                    <div class="wrap_background_aside mb-4">
+                        <div class="row">
+                            <div class="col-xl-8 col-lg-7 col-12 col-cart-left">
+                                <div class="bg-shadow mb-4">
+                                    <div class="header-cart">
+                                        <div class="title-block-page">
+                                            <h1 class="title_cart"><span>{{ translate('Giỏ hàng của bạn') }}</span></h1>
+                                        </div>
+                                    </div>
+                                    <div class="cart-page">
+                                        <div class="cart--empty-message">
+                                            <i class="fa-sharp fa-light fa-bag-shopping"></i>
+                                            <p>{{ translate('Giỏ hàng của bạn đang trống') }}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+    </div>
+{% endblock %}

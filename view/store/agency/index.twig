@@ -1,0 +1,101 @@
+{% extends "layout/layout" %}
+{% block meta %}
+    {{ headTitle('Hệ thống cửa hàng').setSeparator(' - ').setAutoEscape(false)|raw }}
+    <meta name="keywords" content="Hệ thống cửa hàng">
+    <meta name="description" content="Hệ thống cửa hàng">
+    <meta property="og:image" content="{{ getBusinessLogo() }}">
+    <meta property="og:url" content="{{ getCurrentUrl() }}">
+    <meta property="og:title" content="Hệ thống cửa hàng">
+    <link rel="canonical" href="{{ getCurrentUrl() }}">
+{% endblock %}
+{% block body %}
+    {% set cityId = getParam('cityId') %}
+    {% if(cityId > 0) %}
+        <input type="hidden" value="{{ cityId }}" class="checkCityId">
+        {% set agencyList = searchAgency({'id':cityId}) %}
+    {% else %}
+        {% set agencyList = searchAgency() %}
+    {% endif %}
+<div class="bodywrap">
+    <section class="bread-crumb">
+        <div class="container">
+            <ul class="breadcrumb">
+                {% set br = [{'label': translate('Hệ thống cửa hàng'), 'uri': '/he-thong-cua-hang'}] %}
+                {{ render_breadcrumb(br) }}
+            </ul>
+        </div>
+    </section>
+    <section class="page page-store">
+        <div class="container">
+            <div class="bg-shadow">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="d-none">
+                            <div class="page-title category-title">
+                                <h1 class="title-head d-none"><a href="/he-thong-cua-hang"
+                                                                 title="{{ translate('Hệ thống cửa hàng') }}">{{ translate('Hệ thống cửa hàng') }}</a>
+                                </h1>
+                            </div>
+                        </div>
+                        <div class="option-chos">
+                            {% set city = getCity() %}
+                            {% if(city is not empty) %}
+                                <div class="group-city group">
+                                    <select aria-label="customerCity" id="customerCityId"
+                                            class="storeSelect form-control select_box">
+                                        <option value="">{{ translate('Chọn Tỉnh/ thành phố') }}</option>
+                                        {{ toSelectBox(getCity()) | raw }}
+                                    </select>
+
+                                </div>
+                            {% endif %}
+
+                            <div class="group-district group">
+                                <select aria-label="customerDistrict" name="customerDistrictId" id="customerDistrictId"
+                                        class="form-control storeSelectDistrict select_box"
+                                        >
+                                    <option value="">{{ translate('Chọn Quận/ Huyện') }}</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5 col-lg-5 col-xs-12 col-12 col-left">
+                        {% if(agencyList is not empty) %}
+                            <ul class="list-stores menuScroll list-unstyled _depotList">
+                                {% for add in agencyList %}
+                                    <li data-name="{{ add.name }}" data-address="{{ add.address }}"
+                                        data-lat="{{ add.latitude }}" data-long="{{ add.longitude }}"
+                                        class=" navScroll-store border-bottom p-2 _depotItem">
+                                        <p class="name-showroom fw-bold">
+                                            {{ add.name|raw }}
+                                        </p>
+                                        <p class="address">
+                                            <i class="fa-light fa-location-dot"></i>
+                                            <span>{{ add.address|raw }}</span>
+                                        </p>
+                                        <p class="hotline">
+                                            <i class="fa-light fa-phone"></i>
+                                            <span class="fw-bold">{{ add.phone }}</span>
+                                        </p>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-7 col-lg-7 col-xs-12 col-12 col-right">
+                        <div class="wrapcontact">
+                            <div id="map-store" class="img-map">
+                                <div id="map" class="map_part">
+                                    <iframe class="_mapDepot" width="100%" height="550px" src=""></iframe>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+</div>
+{% endblock %}

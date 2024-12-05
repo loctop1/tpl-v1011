@@ -1,0 +1,169 @@
+{
+  "author": "NgVanAnh",
+  "sourceLink": "https://sudes-nest.mysapo.net/",
+  "domain": {
+    "storeId": 15113,
+    "name": "V1011.anhnvweb.bot3s.com",
+    "alias": "V1011.anhnvweb.bot3s.com"
+  },
+  "banners": {
+    "BANNER_HOME": {
+      "name": "Banner slide chính trang chủ",
+      "description": "1920 × 600",
+      "size": "1920 × 600"
+    },
+    "BANNER_MINI_HOME": {
+      "name": "Banner nhỏ dưới banner slide chính trang chủ",
+      "description": "48 × 48",
+      "size": "48 × 48"
+    },
+    "BANNER_HOME_MID": {
+      "name": "Banner quảng cáo giữa của trang chủ",
+      "description": "1300 × 300",
+      "size": "1300 × 300"
+    },
+    "BANNER_BOTTOM_FEEDBACK": {
+      "name": "Banner feedback cuối của trang chủ",
+      "description": "1920 × 400",
+      "size": "1920 × 400"
+    },
+    "BANNER_POLICY_HOME_1": {
+      "name": "Banner chính sách 1",
+      "description": "400 × 100",
+      "size": "400 × 100"
+    },
+    "BANNER_POLICY_HOME_2": {
+      "name": "Banner chính sách 2",
+      "description": "429 × 499",
+      "size": "429 × 499"
+    },
+    "BANNER_PRODUCT": {
+      "name": "Banner trang product",
+      "description": "1200 x 306",
+      "size": "1200 x 306"
+    },
+    "BANNER_NEWS": {
+      "name": "Banner trang chi tiết tin tức",
+      "description": "400 × 600",
+      "size": "400 × 600"
+    },
+    "BANNER_PROMOTION": {
+      "name": "Banner trang khuyến mại",
+      "description": "1200 x 306",
+      "size": "1200 x 306"
+    }
+  },
+  "contents": {
+    "HOME": {
+      "name": "Trang chủ",
+      "keys": {
+        "META_KEYWORDSs": {
+          "type": "TYPE_TEXTBOX",
+          "content": ""
+        },
+        "META_DESCRIPTION": {
+          "type": "TYPE_TEXTBOX",
+          "content": ""
+        },
+        "META_TITLE": {
+          "type": "TYPE_TEXTBOX",
+          "content": ""
+        },
+        "HOTLINE": {
+          "content": "19002812"
+        },
+        "PROMOTION_ID": {
+          "content": ""
+        },
+        "POLICY_ID": {
+          "content": "Chính sách của chúng tôi"
+        },
+        "TITLE_POLICY_1": {
+          "content": "Chất lượng cao cấp"
+        },
+        "CONTENT_POLICY_1": {
+          "content": "Hoàn toàn được gia công"
+        },
+        "TITLE_POLICY_2": {
+          "content": "Chất lượng tuyệt đối"
+        },
+        "CONTENT_POLICY_2": {
+          "content": "100% tự nhiên"
+        },
+        "TITLE_POLICY_3": {
+          "content": "Sản phẩm"
+        },
+        "CONTENT_POLICY_3": {
+          "content": "Đạt chuẩn ARSM"
+        },
+        "TITLE_POLICY_4": {
+          "content": "Giá cả hợp lý"
+        },
+        "CONTENT_POLICY_4": {
+          "content": "Không qua trung gian"
+        },
+        "TITLE_POLICY_5": {
+          "content": "Giao hàng"
+        },
+        "CONTENT_POLICY_5": {
+          "content": "Siêu tốc trong 24h"
+        },
+        "TITLE_POLICY_6": {
+          "content": "Thanh toán"
+        },
+        "CONTENT_POLICY_6": {
+          "content": "Đa dạng và an toàn"
+        },
+        "FEEDBACK_TITLE": {
+          "content": "Khách hàng nói về chúng tôi"
+        },
+        "CONTENT_FEEDBACK": {
+          "content": "Hơn +50,000 khách hàng đã sử dụng cảm nhận như thế nào"
+        },
+        "FOOTER": {
+          "name": "Chân trang",
+          "keys": {
+            "FOOTER_TITLE_1": {
+              "content": "Chính sách"
+            },
+            "FOOTER_CONTENT_1": {
+              "type": "TYPE_TEXTEDITOR",
+              "content": ""
+            },
+            "FOOTER_TITLE_2": {
+              "content": "Hướng dẫn"
+            },
+            "FOOTER_CONTENT_2": {
+              "type": "TYPE_TEXTEDITOR",
+              "content": ""
+            },
+            "FOOTER_TITLE_3": {
+              "content": "Kết nối với chúng tôi"
+            },
+            "ADDRESS": {
+              "content": "Tầng 3, Hà Thành Plaza, 102 Thái Thịnh, Phường Trung Liệt, Quận Đống Đa, Hà Nội"
+            },
+            "ABOUT_US": {
+              "content": "Shop Nudes"
+            },
+            "EMAIL_CONTACT": {
+              "content": "nhanh.vn@nhanh.vn"
+            },
+            "SOCIAL_FACEBOOK": {
+              "content": "https://www.facebook.com/nhanh.vn"
+            },
+            "SOCIAL_INSTAGRAM": {
+              "content": ""
+            },
+            "SOCIAL_SHOPPE": {
+              "content": ""
+            },
+            "SOCIAL_TIKTOK": {
+              "content": ""
+            }
+          }
+        }
+      }
+    }
+  }
+}
